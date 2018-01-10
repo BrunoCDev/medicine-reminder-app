@@ -1,4 +1,4 @@
-package com.invertase.rnfirebasestarter;
+package com.brunorcarvalho.medicinereminder;
 
 import android.app.Application;
 
