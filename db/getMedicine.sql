@@ -1,0 +1,1 @@
+SELECT * FROM medicine WHERE user_id = $1;

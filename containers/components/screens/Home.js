@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   ScrollView,
   Text,
@@ -9,6 +9,9 @@ import {
 import { Card } from "react-native-elements";
 import Button from "antd-mobile/lib/button";
 import styled from "styled-components/native";
+import axios from "axios";
+
+import { connect } from "react-redux";
 
 const images = [
   {
@@ -37,24 +40,50 @@ const images = [
   }
 ];
 
-export default ({ navigation }) => (
-  <View style={{ flex: 1 }}>
-    <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
-      {images.map(({ name, image, url, key }) => (
-        <Card title={`CARD ${key}`} image={image} key={key} editable={true}>
-          <Text style={{ marginBottom: 10 }}>Photo by {name}.</Text>
-          <EditButton underlayColor={"red"} onPress={() => true}>
-            <Text style={{ color: "white", fontSize: 30 }}>Edit</Text>
-          </EditButton>
-        </Card>
-      ))}
-    </ScrollView>
-  </View>
-);
-
 const EditButton = styled.TouchableHighlight`
   background-color: #ddba79;
   height: 50;
   align-items: center;
   justify-content: center;
 `;
+
+class Home extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      medicine: []
+    };
+  }
+
+  componentDidMount() {
+    const { id } = this.props.user;
+    axios
+      .post("http://localhost:3005/api/medicine", { id })
+      .then(res => {
+        this.setState({ medicine: res.data });
+      })
+      .catch(console.log);
+  }
+
+  render() {
+    const { navigation, user } = this.props;
+    return (
+      <View style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
+          {this.state.medicine.map(({ name, image, description }, i) => (
+            <Card title={name} image={{ uri: image }} key={i} editable={true}>
+              <Text style={{ marginBottom: 10 }}>{description}</Text>
+              <EditButton underlayColor={"red"} onPress={() => true}>
+                <Text style={{ color: "white", fontSize: 30 }}>Edit</Text>
+              </EditButton>
+            </Card>
+          ))}
+        </ScrollView>
+      </View>
+    );
+  }
+}
+
+const mapStateToProps = state => state;
+
+export default connect(mapStateToProps)(Home);

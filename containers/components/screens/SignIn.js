@@ -1,8 +1,12 @@
 import React, { Component } from "react";
-import { View } from "react-native";
+import { View, Alert } from "react-native";
 import { Card, Button, FormLabel, FormInput } from "react-native-elements";
+import { onSignIn } from "./../auth";
+import { retrieveUser } from "./../ducks/user";
 
-export default class extends Component {
+import { connect } from "react-redux";
+
+class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -11,7 +15,7 @@ export default class extends Component {
     };
   }
   render() {
-    const { navigation } = this.props;
+    const { navigation, retrieveUser } = this.props;
     const { email, password } = this.state;
     return (
       <View style={{ paddingVertical: 20 }}>
@@ -32,10 +36,25 @@ export default class extends Component {
             buttonStyle={{ marginTop: 20 }}
             backgroundColor="#03A9F4"
             title="SIGN IN"
-            onPress={() => navigation.navigate("SignedIn")}
+            onPress={() =>
+              retrieveUser(email, password).then(res => {
+                if (this.props.user.id) {
+                  navigation.navigate("SignedIn");
+                } else {
+                  Alert.alert(
+                    "Login Not Successful",
+                    "Please provide a valid Email and Password"
+                  );
+                }
+              })
+            }
           />
         </Card>
       </View>
     );
   }
 }
+
+const mapStateToProps = state => state;
+
+export default connect(mapStateToProps, { retrieveUser })(Login);

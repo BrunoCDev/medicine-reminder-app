@@ -5,7 +5,7 @@ const express = require("express");
 const massive = require("massive");
 const session = require("express-session");
 
-const { getUser, createUser } = require("./controllers/userController");
+const uc = require("./controllers/userController");
 
 const PORT = 3005;
 
@@ -37,8 +37,9 @@ app.use(
   })
 );
 
-app.post("/api/auth", getUser);
-app.post("/api/user", createUser);
+app.post("/api/auth", uc.getUser);
+app.post("/api/user", uc.createUser);
+app.post("/api/medicine", uc.getMedicine);
 
 // APP LISTEN
 app.listen(PORT, () => {

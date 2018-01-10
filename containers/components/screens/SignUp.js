@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { View } from "react-native";
+import { View, Alert } from "react-native";
 import { Card, Button, FormLabel, FormInput } from "react-native-elements";
+import { onCreateAccount } from "./../auth";
 
 export default class extends Component {
   constructor(props) {
@@ -13,7 +14,7 @@ export default class extends Component {
   }
   render() {
     const { navigation } = this.props;
-    const { email, password } = this.state;
+    const { email, password, password2 } = this.state;
     return (
       <View style={{ paddingVertical: 20 }}>
         <Card title="SIGN UP">
@@ -39,7 +40,22 @@ export default class extends Component {
             buttonStyle={{ marginTop: 20 }}
             backgroundColor="#03A9F4"
             title="SIGN UP"
-            onPress={() => navigation.navigate("SignedIn")}
+            onPress={() => {
+              if (password !== password2) {
+                Alert.alert("Something went wrong", "Passwords do not match");
+              } else {
+                onCreateAccount(email, password).then(res => {
+                  if (res.id) {
+                    navigation.navigate("SignedIn");
+                  } else {
+                    Alert.alert(
+                      "There was a problem",
+                      "Try using another email"
+                    );
+                  }
+                });
+              }
+            }}
           />
           <Button
             buttonStyle={{ marginTop: 20 }}
