@@ -4,7 +4,8 @@ import {
   Text,
   Linking,
   View,
-  TouchableHighlight
+  TouchableHighlight,
+  TextInput
 } from "react-native";
 import { Card } from "react-native-elements";
 import Button from "antd-mobile/lib/button";

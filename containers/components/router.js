@@ -6,6 +6,8 @@ import SignIn from "./screens/SignIn";
 import Home from "./screens/Home";
 import Profile from "./screens/Profile";
 
+import Interaction from "./screens/Interaction";
+
 export const createRootNavigator = (signedIn = false) => {
   return StackNavigator(
     {
@@ -52,6 +54,15 @@ export const SignedIn = TabNavigator({
       tabBarLabel: "Home",
       tabBarIcon: ({ tintColor }) => (
         <FontAwesome name="home" size={30} color={tintColor} />
+      )
+    }
+  },
+  Interaction: {
+    screen: Interaction,
+    navigationOptions: {
+      tabBarLabel: "Interaction",
+      tabBarIcon: ({ tintColor }) => (
+        <FontWesome name="user" size={30} color={tintColor} />
       )
     }
   },
