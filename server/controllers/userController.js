@@ -10,7 +10,6 @@ const getUser = (req, res, next) => {
 const createUser = (req, res, next) => {
   const db = req.app.get("db");
   const { email, password } = req.body;
-  console.log(req.body);
   db
     .createUser([email, password])
     .then(response => res.json(response[0]))
@@ -26,8 +25,18 @@ const getMedicine = (req, res, next) => {
     .catch(console.log);
 };
 
+const createMedicine = (req, res, next) => {
+  const db = req.app.get("db");
+  const { name, image, description, rxcuis, id } = req.body;
+  db
+    .createMedicine([name, image, description, rxcuis, id])
+    .then(response => res.json(response[0]))
+    .catch(console.log);
+};
+
 module.exports = {
   getUser,
   createUser,
-  getMedicine
+  getMedicine,
+  createMedicine
 };

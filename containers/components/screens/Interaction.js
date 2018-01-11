@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Alert, Text } from "react-native";
+import { View, Alert, Text, ScrollView } from "react-native";
 import { Card, Button, FormLabel, FormInput } from "react-native-elements";
 import { onSignIn } from "./../auth";
 import { retrieveUser } from "./../ducks/user";
@@ -35,7 +35,6 @@ class Interaction extends Component {
           res.data.map(({ rxcuis }, i) => {
             this.setState({ str: this.state.str + `${rxcuis}+` });
           });
-          // this.setState({ int: this.state.int + this.state.str });
           axios
             .get(`${this.state.int}${this.state.str}`)
             .then(res => {
@@ -53,7 +52,7 @@ class Interaction extends Component {
 
   render() {
     return (
-      <View style={{ paddingVertical: 20 }}>
+      <ScrollView style={{ paddingVertical: 20 }}>
         <Card title="Interactions">
           <Button
             buttonStyle={{ marginTop: 0 }}
@@ -82,7 +81,7 @@ class Interaction extends Component {
             onPress={() => this.deleteInteractions()}
           />
         </Card>
-      </View>
+      </ScrollView>
     );
   }
 }
