@@ -32,6 +32,7 @@
     "rc-animate": "2.4.4",
     "react": "16.0.0",
     "react-native": "0.50.3",
+    "react-native-calendar-events": "1.4.3",
     "react-native-elements": "0.18.5",
     "react-native-firebase": "3.1.1",
     "react-native-image-picker": "0.26.7",

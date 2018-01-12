@@ -148,6 +148,7 @@ android {
 
 dependencies {
     compile project(':react-native-image-picker')
+    compile project(':react-native-calendar-events')
     compile(project(':react-native-firebase')) {
         transitive = false
     }
