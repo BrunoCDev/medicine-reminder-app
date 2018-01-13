@@ -22,6 +22,7 @@ import io.invertase.firebase.perf.RNFirebasePerformancePackage; // Firebase Perf
 import io.invertase.firebase.storage.RNFirebaseStoragePackage; // Firebase Storage
 import com.imagepicker.ImagePickerPackage;
 import com.calendarevents.CalendarEventsPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +52,8 @@ public class MainApplication extends Application implements ReactApplication {
         new RNFirebasePerformancePackage(),
         new RNFirebaseStoragePackage(),
         new ImagePickerPackage(),
-        new CalendarEventsPackage()
+        new CalendarEventsPackage(),
+        new VectorIconsPackage()
       );
     }
     

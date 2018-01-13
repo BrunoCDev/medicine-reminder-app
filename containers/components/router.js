@@ -5,6 +5,7 @@ import SignIn from "./screens/SignIn";
 
 import Home from "./screens/Home";
 import Profile from "./screens/Profile";
+import Create from "./screens/Create";
 
 import Interaction from "./screens/Interaction";
 
@@ -47,32 +48,29 @@ export const SignedOut = StackNavigator({
   }
 });
 
-export const SignedIn = TabNavigator({
+export const SignedIn = StackNavigator({
   Home: {
     screen: Home,
     navigationOptions: {
-      tabBarLabel: "Home",
-      tabBarIcon: ({ tintColor }) => (
-        <FontAwesome name="home" size={30} color={tintColor} />
-      )
+      title: "Dashboard"
     }
   },
   Interaction: {
     screen: Interaction,
     navigationOptions: {
-      tabBarLabel: "Interaction",
-      tabBarIcon: ({ tintColor }) => (
-        <FontWesome name="user" size={30} color={tintColor} />
-      )
+      title: "Interactions"
     }
   },
   Profile: {
     screen: Profile,
     navigationOptions: {
-      tabBarLabel: "Profile",
-      tabBarIcon: ({ tintColor }) => (
-        <FontAwesome name="user" size={30} color={tintColor} />
-      )
+      title: "Profile"
+    }
+  },
+  Create: {
+    screen: Create,
+    navigationOptions: {
+      title: "Create"
     }
   }
 });

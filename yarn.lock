@@ -4088,6 +4088,12 @@ react-devtools-core@^2.5.0:
     shell-quote "^1.6.1"
     ws "^2.0.3"
 
+react-native-action-button@2.8.3:
+  version "2.8.3"
+  resolved "https://registry.yarnpkg.com/react-native-action-button/-/react-native-action-button-2.8.3.tgz#f8a2b01fcb9ea328106c355169c9fcb0bb41f2b0"
+  dependencies:
+    prop-types "^15.5.10"
+
 react-native-calendar-events@1.4.3:
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/react-native-calendar-events/-/react-native-calendar-events-1.4.3.tgz#29804e8b44d6946e69ab5a20902d9449ed315c47"

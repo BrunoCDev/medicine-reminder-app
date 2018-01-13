@@ -18,7 +18,7 @@ const createUser = (req, res, next) => {
 
 const getMedicine = (req, res, next) => {
   const db = req.app.get("db");
-  const { id } = req.body;
+  const { id } = req.params;
   db
     .getMedicine([id])
     .then(response => res.json(response))

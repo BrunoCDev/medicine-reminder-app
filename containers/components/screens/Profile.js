@@ -7,8 +7,9 @@ import {
 } from "react-native";
 import { Card, Button, Text } from "react-native-elements";
 import RNCalendarEvents from "react-native-calendar-events";
+import { connect } from "react-redux";
 
-export default class Profile extends Component {
+class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,7 +25,8 @@ export default class Profile extends Component {
       hourEnd: "",
       minutesEnd: "",
       interval: 1,
-      AlarmId: []
+      AlarmId: [],
+      check: false
     };
 
     this.createAlarm = this.createAlarm.bind(this);
@@ -85,70 +87,84 @@ export default class Profile extends Component {
   }
 
   render() {
-    const { navigation } = this.props;
-
+    const { navigation, medicine } = this.props;
+    const { check } = this.state;
+    console.log(medicine);
     return (
       <View style={{ paddingVertical: 20 }}>
-        <ScrollView>
-          <Card title="Alarm">
-            <Text style={{ color: "white", fontSize: 28 }}>JD</Text>
-            <Button
-              backgroundColor="#03A9F4"
-              title="SIGN OUT"
-              onPress={() => navigation.navigate("SignedOut")}
-            />
-            <Button
-              backgroundColor="#03A9F4"
-              title="Alarm"
-              onPress={this.createAlarm}
-            />
+        <Button onPress={() => this.setState({ check: true })}>Update</Button>
+        {medicine.name.length ? (
+          <View style={{ paddingVertical: 20 }}>
+            <ScrollView>
+              <Card
+                title={medicine.name}
+                image={{ uri: medicine.image }}
+                editable={true}
+              >
+                <Text style={{ marginBottom: 20 }}>{medicine.description}</Text>
+              </Card>
 
-            <Button
-              backgroundColor="red"
-              title="Set Start Date/Hour"
-              onPress={() => {
-                const { action, date } = DatePickerAndroid.open({
-                  date: new Date()
-                }).then(result => {
-                  this.setState({
-                    year: result.year,
-                    month: result.month,
-                    day: result.day
-                  });
-                  TimePickerAndroid.open({}).then(result2 => {
-                    this.setState({
-                      hour: result2.hour,
-                      minutes: result2.minute
-                    });
-                  });
-                });
-              }}
-            />
+              <Card title="Alarm">
+                <Text style={{ color: "white", fontSize: 28 }}>JD</Text>
 
-            <Button
-              backgroundColor="green"
-              title="Set End Date/Hour"
-              onPress={() => {
-                const { action, date } = DatePickerAndroid.open({
-                  date: new Date()
-                }).then(result => {
-                  this.setState({
-                    yearEnd: result.year,
-                    monthEnd: result.month,
-                    dayEnd: result.day
-                  });
-                  TimePickerAndroid.open({}).then(result2 => {
-                    this.setState({
-                      hourEnd: result2.hour,
-                      minutesEnd: result2.minute
+                <Button
+                  backgroundColor="#03A9F4"
+                  title="Alarm"
+                  onPress={this.createAlarm}
+                />
+
+                <Button
+                  backgroundColor="red"
+                  title="Set Start Date/Hour"
+                  onPress={() => {
+                    const { action, date } = DatePickerAndroid.open({
+                      date: new Date()
+                    }).then(result => {
+                      this.setState({
+                        year: result.year,
+                        month: result.month,
+                        day: result.day
+                      });
+                      TimePickerAndroid.open({}).then(result2 => {
+                        this.setState({
+                          hour: result2.hour,
+                          minutes: result2.minute
+                        });
+                      });
                     });
-                  });
-                });
-              }}
-            />
-          </Card>
-        </ScrollView>
+                  }}
+                />
+
+                <Button
+                  backgroundColor="green"
+                  title="Set End Date/Hour"
+                  onPress={() => {
+                    const { action, date } = DatePickerAndroid.open({
+                      date: new Date()
+                    }).then(result => {
+                      this.setState({
+                        yearEnd: result.year,
+                        monthEnd: result.month,
+                        dayEnd: result.day
+                      });
+                      TimePickerAndroid.open({}).then(result2 => {
+                        this.setState({
+                          hourEnd: result2.hour,
+                          minutesEnd: result2.minute
+                        });
+                      });
+                    });
+                  }}
+                />
+              </Card>
+            </ScrollView>
+          </View>
+        ) : null}
       </View>
     );
   }
 }
+
+const mapStateToProps = state => state;
+
+export default connect(mapStateToProps)(Profile);

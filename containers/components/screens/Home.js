@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import axios from "axios";
+import { connect } from "react-redux";
+
 import {
   ScrollView,
   Text,
@@ -7,15 +10,18 @@ import {
   TouchableHighlight,
   TextInput,
   Image,
-  Alert
+  Alert,
+  StyleSheet
 } from "react-native";
+
 import { Card } from "react-native-elements";
 import Button from "antd-mobile/lib/button";
+import ActionButton from "react-native-action-button";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import styled from "styled-components/native";
-import axios from "axios";
-const ImagePicker = require("react-native-image-picker");
+import Menu from "./../extras/Menu";
 
-import { connect } from "react-redux";
+import { retrieveMedicine } from "./../ducks/user";
 
 const EditButton = styled.TouchableHighlight`
   background-color: #ddba79;
@@ -34,166 +40,42 @@ const CreateButton = styled.TouchableHighlight`
 class Home extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      medicine: [],
-      create: false,
-      createButton: true,
-      name: "",
-      image:
-        "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png",
-      description: "",
-      rxcuis: "",
-      loaded: true,
-      uri: ""
-    };
-
-    this.createNewMedicine = this.createNewMedicine.bind(this);
-    this.getImage = this.getImage.bind(this);
+    this.state = {};
   }
 
   componentDidMount() {
     const { id } = this.props.user;
-    axios
-      .post("http://localhost:3005/api/medicine", { id })
-      .then(res => {
-        this.setState({ medicine: res.data });
-      })
-      .catch(console.log);
+    this.props.retrieveMedicine(id);
   }
 
-  // CAMERA TEST
-
-  getImage = () => {
-    ImagePicker.showImagePicker({ cameraType: "back" }, response => {
-      console.log(response.uri);
-      let source = response.uri;
-      this.setState({
-        image: source
-      });
-      return true;
-    });
-  };
-
-  createNewMedicine() {
-    const { id } = this.props.user;
-    const { name, image, description, medicine, loaded } = this.state;
-    this.setState({ loaded: false });
-    axios
-      .get(`https://rxnav.nlm.nih.gov/REST/rxcui?name=${name}`)
-      .then(res => {
-        if (res.data.idGroup.rxnormId) {
-          this.setState({ rxcuis: res.data.idGroup.rxnormId[0] });
-          const { rxcuis } = this.state;
-          axios
-            .post("http://localhost:3005/api/createmedicine", {
-              name,
-              image,
-              description,
-              rxcuis,
-              id
-            })
-            .then(res => {
-              medicine.push(res.data);
-              this.setState({ loaded: true });
-              return null;
-            })
-            .catch(console.log);
-        } else {
-          this.setState({ loaded: true });
-          Alert.alert("Medicine not found", "Make sure the name is right");
-          return null;
-        }
-      })
-      .catch(console.log);
+  componentWillReceiveProps(newProps) {
+    console.log(newProps);
   }
 
   render() {
     const { navigation, user } = this.props;
-    const { loaded, createButton } = this.state;
     return (
       <View style={{ flex: 1 }}>
-        {createButton ? (
-          <CreateButton
-            onPress={() => this.setState({ create: true, createButton: false })}
-          >
-            <Text>Create New</Text>
-          </CreateButton>
-        ) : null}
+        <CreateButton onPress={() => navigation.navigate("Create")}>
+          <Text>Create New</Text>
+        </CreateButton>
+
         <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
-          {this.state.create ? (
-            <Card>
-              <Image
-                source={{ uri: this.state.image }}
-                style={{ height: 300 }}
-              />
+          {this.props.medicine.map(({ name, image, description }, i) => (
+            <Card title={name} image={{ uri: image }} key={i} editable={true}>
+              <Text style={{ marginBottom: 20 }}>{description}</Text>
 
-              <EditButton onPress={this.getImage} style={{ marginTop: 20 }}>
-                <Text>Get Image</Text>
+              <EditButton
+                underlayColor={"red"}
+                onPress={() => medicine.splice(i, 1)}
+              >
+                <Text style={{ fontSize: 30 }}>Remove</Text>
               </EditButton>
-
-              <TextInput
-                onChangeText={e => this.setState({ name: e })}
-                placeholder="Name"
-                style={{ marginTop: 20 }}
-              />
-
-              <TextInput
-                onChangeText={e => this.setState({ description: e })}
-                placeholder="Description"
-                style={{ marginTop: 20 }}
-              />
-              <View style={{ flexDirection: "row", marginTop: 20 }}>
-                <EditButton
-                  style={{
-                    width: 50,
-                    flex: 0.4,
-                    alignSelf: "flex-start",
-                    marginLeft: 30,
-                    backgroundColor: "#cdc8b1"
-                  }}
-                  onPress={() => {
-                    this.setState({ create: false, createButton: true });
-                  }}
-                >
-                  <Text>Cancel</Text>
-                </EditButton>
-
-                <EditButton
-                  style={{
-                    width: 50,
-                    flex: 0.4,
-                    marginLeft: 70,
-                    alignSelf: "flex-end",
-                    backgroundColor: "#cdc8b1"
-                  }}
-                  onPress={() => {
-                    this.createNewMedicine();
-                    this.setState({ create: false, createButton: true });
-                  }}
-                >
-                  <Text>Save</Text>
-                </EditButton>
-              </View>
             </Card>
-          ) : null}
-
-          {loaded
-            ? this.state.medicine.map(({ name, image, description }, i) => (
-                <Card
-                  title={name}
-                  image={{ uri: image }}
-                  key={i}
-                  editable={true}
-                >
-                  <Text style={{ marginBottom: 20 }}>{description}</Text>
-
-                  <EditButton underlayColor={"red"} onPress={() => true}>
-                    <Text style={{ fontSize: 30 }}>Edit</Text>
-                  </EditButton>
-                </Card>
-              ))
-            : null}
+          ))}
         </ScrollView>
+        {/* MENU BUTTONS! */}
+        <Menu />
       </View>
     );
   }
@@ -201,4 +83,13 @@ class Home extends Component {
 
 const mapStateToProps = state => state;
 
-export default connect(mapStateToProps)(Home);
+export default connect(mapStateToProps, { retrieveMedicine })(Home);
+
+// MENU BUTTONS STYLE
+const styles = StyleSheet.create({
+  actionButtonIcon: {
+    fontSize: 20,
+    height: 22,
+    color: "white"
+  }
+});

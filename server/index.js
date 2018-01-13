@@ -39,7 +39,7 @@ app.use(
 
 app.post("/api/auth", uc.getUser);
 app.post("/api/user", uc.createUser);
-app.post("/api/medicine", uc.getMedicine);
+app.get("/api/medicine/:id", uc.getMedicine);
 app.post("/api/createmedicine", uc.createMedicine);
 
 // APP LISTEN
