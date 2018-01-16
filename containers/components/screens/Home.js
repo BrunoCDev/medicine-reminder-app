@@ -21,7 +21,11 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import styled from "styled-components/native";
 import Menu from "./../extras/Menu";
 
-import { retrieveMedicine, editMedicine } from "./../ducks/user";
+import {
+  retrieveMedicine,
+  editMedicine,
+  deleteMedicine
+} from "./../ducks/user";
 
 class Home extends Component {
   constructor(props) {
@@ -49,7 +53,7 @@ class Home extends Component {
           onPress={() => navigation.navigate("Create")}
         />
 
-        <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
+        <ScrollView contentContainerStyle={{ paddingVertical: 15 }}>
           {medicine.map(({ name, image, description, id }) => (
             <Card
               title={name}
@@ -58,7 +62,7 @@ class Home extends Component {
                 color: "#a7a7a7"
               }}
               image={{ uri: image }}
-              imageStyle={{ height: 310 }}
+              imageStyle={{ height: 250 }}
               key={id}
               editable={true}
             >
@@ -82,6 +86,24 @@ class Home extends Component {
                   this.props
                     .editMedicine(id)
                     .then(() => navigation.navigate("Profile"));
+                }}
+              />
+              <Button
+                small
+                title={"Delete"}
+                buttonStyle={{
+                  width: 200,
+                  backgroundColor: "#a7a7a7",
+                  marginTop: 20
+                }}
+                textStyle={{ fontSize: 15, letterSpacing: 10 }}
+                onPress={() => {
+                  this.props
+                    .deleteMedicine(id, this.props.user.id)
+                    .then(() =>
+                      this.props.retrieveMedicine(this.props.user.id)
+                    );
+                  Alert.alert("Medicine", "Medicine sucessfully removed");
                 }}
               />
             </Card>
@@ -110,9 +132,11 @@ class Home extends Component {
 
 const mapStateToProps = state => state;
 
-export default connect(mapStateToProps, { retrieveMedicine, editMedicine })(
-  Home
-);
+export default connect(mapStateToProps, {
+  retrieveMedicine,
+  editMedicine,
+  deleteMedicine
+})(Home);
 
 // MENU BUTTONS STYLE
 const styles = StyleSheet.create({

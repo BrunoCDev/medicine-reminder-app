@@ -22,7 +22,6 @@ class Profile extends Component {
   createNewAlarm() {
     const { description, name, id } = this.props.activeMedicine;
     let final = new Date(`${this.state.startDate}${this.state.time}`);
-    console.log(this.props.activeMedicine.id);
     PushNotification.localNotificationSchedule({
       id: this.props.activeMedicine.id.toString(),
       title: name,

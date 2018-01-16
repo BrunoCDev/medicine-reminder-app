@@ -16,6 +16,7 @@ const RETRIEVE_MEDICINE = "RETRIEVE_MEDICINE";
 const CREATE_MEDICINE = "CREATE_MEDICINE";
 const RETRIEVE_RXCUIS = "RETRIEVE_RXCUIS";
 const EDIT_MEDICINE = "EDIT_MEDICINE";
+const DELETE_MEDICINE = "DELETE_MEDICINE";
 
 //Action Creators
 export function retrieveUser(email, password) {
@@ -76,6 +77,19 @@ export function editMedicine(id) {
     type: EDIT_MEDICINE,
     payload: axios
       .get(`http://localhost:3005/api/edit/${id}`)
+      .then(response => response.data)
+      .catch(console.log)
+  };
+}
+
+export function deleteMedicine(id, userId) {
+  console.log(id, userId);
+  return {
+    type: DELETE_MEDICINE,
+    payload: axios
+      .delete(`http://localhost:3005/api/deletemedicine`, {
+        params: { id, userId }
+      })
       .then(response => response.data)
       .catch(console.log)
   };
@@ -159,6 +173,22 @@ export default function user(state = initialState, action = {}) {
       });
 
     case `${EDIT_MEDICINE}_REJECTED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didError: true
+      });
+
+    // DELETE MEDICINE
+    case `${DELETE_MEDICINE}_PENDING`:
+      return Object.assign({}, state, { isLoading: true });
+
+    case `${DELETE_MEDICINE}_FULFILLED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        medicine: action.payload
+      });
+
+    case `${DELETE_MEDICINE}_REJECTED`:
       return Object.assign({}, state, {
         isLoading: false,
         didError: true

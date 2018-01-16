@@ -42,6 +42,7 @@ app.post("/api/user", uc.createUser);
 app.get("/api/medicine/:id", uc.getMedicine);
 app.post("/api/createmedicine", uc.createMedicine);
 app.get("/api/edit/:id", uc.editMedicine);
+app.delete("/api/deletemedicine", uc.deleteMedicine);
 
 // APP LISTEN
 app.listen(PORT, () => {

@@ -43,10 +43,20 @@ const editMedicine = (req, res, next) => {
     .catch(console.log);
 };
 
+const deleteMedicine = (req, res, next) => {
+  const db = req.app.get("db");
+  const { id, userId } = req.query;
+  db
+    .deleteMedicine([id, userId])
+    .then(response => res.json(response))
+    .catch(console.log);
+};
+
 module.exports = {
   getUser,
   createUser,
   getMedicine,
   createMedicine,
-  editMedicine
+  editMedicine,
+  deleteMedicine
 };
