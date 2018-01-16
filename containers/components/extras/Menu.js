@@ -6,7 +6,18 @@ import ActionButton from "react-native-action-button";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default class Menu extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
+    const styles = StyleSheet.create({
+      actionButtonIcon: {
+        fontSize: 20,
+        height: 22,
+        color: "white"
+      }
+    });
     return (
       <ActionButton
         buttonColor="#83B3D8"
@@ -17,33 +28,18 @@ export default class Menu extends Component {
       >
         <ActionButton.Item
           buttonColor="#9b59b6"
-          onPress={() => navigation.navigate("Home")}
+          onPress={() => navigate("Home")}
         >
           <Icon name="pill" style={styles.actionButtonIcon} />
         </ActionButton.Item>
 
         <ActionButton.Item
           buttonColor="#3498db"
-          onPress={() => navigation.navigate("Interaction")}
+          onPress={() => navigate("Interaction")}
         >
           <Icon name="link-variant" style={styles.actionButtonIcon} />
-        </ActionButton.Item>
-
-        <ActionButton.Item
-          buttonColor="#1abc9c"
-          onPress={() => navigation.navigate("Profile")}
-        >
-          <Icon name="face-profile" style={styles.actionButtonIcon} />
         </ActionButton.Item>
       </ActionButton>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  actionButtonIcon: {
-    fontSize: 20,
-    height: 22,
-    color: "white"
-  }
-});

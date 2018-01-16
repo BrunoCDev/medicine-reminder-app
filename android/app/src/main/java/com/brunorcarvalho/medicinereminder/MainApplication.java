@@ -9,7 +9,7 @@ import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 
 import io.invertase.firebase.RNFirebasePackage;
-// optional packages - add/remove as appropriate
+// // optional packages - add/remove as appropriate
 import io.invertase.firebase.admob.RNFirebaseAdMobPackage; //Firebase AdMob
 import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage; // Firebase Analytics
 import io.invertase.firebase.auth.RNFirebaseAuthPackage; // Firebase Auth
@@ -23,6 +23,7 @@ import io.invertase.firebase.storage.RNFirebaseStoragePackage; // Firebase Stora
 import com.imagepicker.ImagePickerPackage;
 import com.calendarevents.CalendarEventsPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -53,7 +54,9 @@ public class MainApplication extends Application implements ReactApplication {
         new RNFirebaseStoragePackage(),
         new ImagePickerPackage(),
         new CalendarEventsPackage(),
-        new VectorIconsPackage()
+        new VectorIconsPackage(),
+        new ReactNativePushNotificationPackage()
+        
       );
     }
     

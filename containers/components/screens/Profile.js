@@ -2,164 +2,134 @@ import React, { Component } from "react";
 import {
   View,
   ScrollView,
+  Picker,
+  AppState,
   DatePickerAndroid,
-  TimePickerAndroid
+  TimePickerAndroid,
+  Alert
 } from "react-native";
 import { Card, Button, Text } from "react-native-elements";
-import RNCalendarEvents from "react-native-calendar-events";
 import { connect } from "react-redux";
+import PushController from "./../extras/PushController";
+import PushNotification from "react-native-push-notification";
 
 class Profile extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      year: "",
-      month: "",
-      day: "",
-      hour: "",
-      minutes: "",
-      datePicker: false,
-      yearEnd: "",
-      monthEnd: "",
-      dayEnd: "",
-      hourEnd: "",
-      minutesEnd: "",
-      interval: 1,
-      AlarmId: [],
-      check: false
-    };
-
-    this.createAlarm = this.createAlarm.bind(this);
-  }
-  componentDidMount() {
-    RNCalendarEvents.authorizeEventStore()
-      .then(status => {
-        console.log(status);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    this.state = {};
   }
 
-  createAlarm() {
-    const {
-      year,
-      month,
-      day,
-      hour,
-      minutes,
-      yearEnd,
-      monthEnd,
-      dayEnd,
-      hourEnd,
-      minutesEnd,
-      interval
-    } = this.state;
-    let startMonth = parseInt(month, 10) + 1;
-    let endMonth = parseInt(monthEnd, 10) + 1;
-    let minute = parseInt(minutes, 10) + 15;
-
-    let startDate = `${year}-${startMonth.toString()}-${day}T${hour}:${minutes}:00.000Z`;
-    let endDate = `${yearEnd}-${endMonth.toString()}-${dayEnd}T${hourEnd}:${minutesEnd}:00.000Z`;
-
-    for (let i = startMonth; i <= endMonth; i++) {
-      for (let d = day; d <= dayEnd; d++) {
-        RNCalendarEvents.saveEvent("Alarm Title", {
-          location: "location",
-          notes: "notes",
-          startDate: `${year}-${startMonth.toString()}-${d}T${hour}:${minutes}:00.000Z`,
-          endDate: `${year}-${startMonth.toString()}-${d}T${hour}:${minute.toString()}:00.000Z`,
-          alarms: [
-            {
-              date: -5
-            }
-          ]
-        })
-          .then(id => {
-            d = d + interval;
-            this.state.AlarmId.push(id);
-          })
-          .catch(error => {
-            console.log(error);
-          });
-      }
-    }
+  createNewAlarm() {
+    const { description, name, id } = this.props.activeMedicine;
+    let final = new Date(`${this.state.startDate}${this.state.time}`);
+    console.log(this.props.activeMedicine.id);
+    PushNotification.localNotificationSchedule({
+      id: this.props.activeMedicine.id.toString(),
+      title: name,
+      message: description,
+      vibrate: true,
+      vibration: 1000,
+      repeatType: this.state.interval,
+      date: final
+    });
+    Alert.alert("Alarm", "Alarm was sucessfully added");
   }
 
   render() {
-    const { navigation, medicine } = this.props;
-    const { check } = this.state;
-    console.log(medicine);
+    const { navigation, activeMedicine } = this.props;
     return (
-      <View style={{ paddingVertical: 20 }}>
-        <Button onPress={() => this.setState({ check: true })}>Update</Button>
-        {medicine.name.length ? (
-          <View style={{ paddingVertical: 20 }}>
-            <ScrollView>
-              <Card
-                title={medicine.name}
-                image={{ uri: medicine.image }}
-                editable={true}
-              >
-                <Text style={{ marginBottom: 20 }}>{medicine.description}</Text>
-              </Card>
+      <View style={{ paddingVertical: 20, backgroundColor: "#e2e2e2" }}>
+        <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
+          <Card
+            titleStyle={{
+              fontSize: 30,
+              color: "#a7a7a7"
+            }}
+            title={activeMedicine.name}
+            image={{ uri: activeMedicine.image }}
+            imageStyle={{ height: 310 }}
+            editable={true}
+          >
+            <Text
+              style={{
+                marginBottom: 15,
+                fontSize: 18,
+                textAlign: "center",
+                color: "#a7a7a7"
+              }}
+            >
+              {activeMedicine.description}
+            </Text>
+            <Picker
+              style={{ color: "#a7a7a7", marginBottom: 10 }}
+              selectedValue={this.state.interval}
+              onValueChange={(itemValue, itemIndex) =>
+                this.setState({ interval: itemValue })
+              }
+            >
+              <Picker.Item label="One Time Only" value={null} />
+              <Picker.Item label="Every Minute" value="minute" />
+              <Picker.Item label="Daily" value="day" />
+              <Picker.Item label="Weekly" value="week" />
+            </Picker>
 
-              <Card title="Alarm">
-                <Text style={{ color: "white", fontSize: 28 }}>JD</Text>
-
-                <Button
-                  backgroundColor="#03A9F4"
-                  title="Alarm"
-                  onPress={this.createAlarm}
-                />
-
-                <Button
-                  backgroundColor="red"
-                  title="Set Start Date/Hour"
-                  onPress={() => {
-                    const { action, date } = DatePickerAndroid.open({
-                      date: new Date()
-                    }).then(result => {
-                      this.setState({
-                        year: result.year,
-                        month: result.month,
-                        day: result.day
-                      });
-                      TimePickerAndroid.open({}).then(result2 => {
-                        this.setState({
-                          hour: result2.hour,
-                          minutes: result2.minute
-                        });
-                      });
+            <Button
+              backgroundColor="#a7a7a7"
+              title="Set Date/Hour"
+              buttonStyle={{ marginBottom: 15 }}
+              onPress={() => {
+                const { action, date } = DatePickerAndroid.open({
+                  date: new Date()
+                }).then(r => {
+                  let month = parseInt(r.month, 10) + 1;
+                  month < 10
+                    ? (month = "0" + month.toString())
+                    : (month = month.toString());
+                  let day = parseInt(r.day, 10);
+                  day < 10
+                    ? (day = "0" + day.toString())
+                    : (day = day.toString());
+                  this.setState({
+                    startDate: `${r.year}-${month}-${day}T`
+                  });
+                  TimePickerAndroid.open({}).then(r2 => {
+                    let hour = parseInt(r2.hour, 10);
+                    hour < 10
+                      ? (hour = "0" + hour.toString())
+                      : (hour = hour.toString());
+                    let minutes = parseInt(r2.minute, 10);
+                    minutes < 10
+                      ? (minutes = "0" + minutes.toString())
+                      : (minutes = minutes.toString());
+                    this.setState({
+                      time: `${hour}:${minutes}:00`
                     });
-                  }}
-                />
+                  });
+                });
+              }}
+            />
 
-                <Button
-                  backgroundColor="green"
-                  title="Set End Date/Hour"
-                  onPress={() => {
-                    const { action, date } = DatePickerAndroid.open({
-                      date: new Date()
-                    }).then(result => {
-                      this.setState({
-                        yearEnd: result.year,
-                        monthEnd: result.month,
-                        dayEnd: result.day
-                      });
-                      TimePickerAndroid.open({}).then(result2 => {
-                        this.setState({
-                          hourEnd: result2.hour,
-                          minutesEnd: result2.minute
-                        });
-                      });
-                    });
-                  }}
-                />
-              </Card>
-            </ScrollView>
-          </View>
-        ) : null}
+            <Button
+              backgroundColor="#a7a7a7"
+              buttonStyle={{ marginBottom: 15 }}
+              title="Add Alarm"
+              onPress={() => this.createNewAlarm()}
+            />
+
+            <Button
+              backgroundColor="#a7a7a7"
+              buttonStyle={{ marginBottom: 15 }}
+              title="Delete Alarm"
+              onPress={() => {
+                PushNotification.cancelAllLocalNotifications({
+                  id: this.props.activeMedicine.id.toString()
+                });
+                Alert.alert("Alarm", "Alarm was sucessfully removed");
+              }}
+            />
+          </Card>
+        </ScrollView>
+        <PushController />
       </View>
     );
   }

@@ -14,7 +14,8 @@ class Interaction extends Component {
       int: "https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=",
       str: "",
       final: "",
-      description: []
+      description: [],
+      loaded: false
     };
 
     this.checkForInteractions = this.checkForInteractions.bind(this);
@@ -27,22 +28,24 @@ class Interaction extends Component {
 
   checkForInteractions() {
     const { id } = this.props.user;
-    this.setState({ rendered: false });
     if (!this.state.description.length) {
       axios
-        .post("http://localhost:3005/api/medicine", { id })
+        .get(`http://localhost:3005/api/medicine/${id}`)
         .then(res => {
           res.data.map(({ rxcuis }, i) => {
             this.setState({ str: this.state.str + `${rxcuis}+` });
           });
           axios
             .get(`${this.state.int}${this.state.str}`)
-            .then(res => {
-              res.data.fullInteractionTypeGroup[0].fullInteractionType.map(
-                (el, index) =>
-                  this.state.description.push(el.interactionPair[0].description)
+            .then(res2 => {
+              res2.data.fullInteractionTypeGroup[0].fullInteractionType.map(
+                (el, index) => {
+                  this.state.description.push(
+                    el.interactionPair[0].description
+                  );
+                  this.setState({ loaded: true });
+                }
               );
-              () => true;
             })
             .catch(console.log);
         })
@@ -56,10 +59,11 @@ class Interaction extends Component {
         <Card title="Interactions">
           <Button
             buttonStyle={{ marginTop: 0 }}
-            backgroundColor="#03A9F4"
+            backgroundColor="#a7a7a7"
             title="Check"
             onPress={() => this.checkForInteractions()}
           />
+
           {this.state.description.length ? (
             this.state.description.map((el, i) => (
               <Text
@@ -74,12 +78,17 @@ class Interaction extends Component {
               No Bad Interactions Found
             </Text>
           )}
-          <Button
-            buttonStyle={{ marginTop: 20 }}
-            backgroundColor="#03A9F4"
-            title="Delete"
-            onPress={() => this.deleteInteractions()}
-          />
+          {this.state.description.length ? (
+            <Button
+              buttonStyle={{ marginTop: 20 }}
+              backgroundColor="#a7a7a7"
+              title="Delete"
+              onPress={() => {
+                this.deleteInteractions();
+                this.setState({ loaded: false });
+              }}
+            />
+          ) : null}
         </Card>
       </ScrollView>
     );

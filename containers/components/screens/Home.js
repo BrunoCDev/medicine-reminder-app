@@ -14,28 +14,14 @@ import {
   StyleSheet
 } from "react-native";
 
-import { Card } from "react-native-elements";
-import Button from "antd-mobile/lib/button";
+import { Card, Button } from "react-native-elements";
+// import Button from "antd-mobile/lib/button";
 import ActionButton from "react-native-action-button";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import styled from "styled-components/native";
 import Menu from "./../extras/Menu";
 
-import { retrieveMedicine } from "./../ducks/user";
-
-const EditButton = styled.TouchableHighlight`
-  background-color: #ddba79;
-  height: 50;
-  align-items: center;
-  justify-content: center;
-`;
-
-const CreateButton = styled.TouchableHighlight`
-  background-color: #cdc8b1;
-  height: 50;
-  align-items: center;
-  justify-content: center;
-`;
+import { retrieveMedicine, editMedicine } from "./../ducks/user";
 
 class Home extends Component {
   constructor(props) {
@@ -49,33 +35,74 @@ class Home extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    console.log(newProps);
+    // this.props.retrieveMedicine(id);
   }
 
   render() {
-    const { navigation, user } = this.props;
+    const { navigation, user, medicine } = this.props;
     return (
-      <View style={{ flex: 1 }}>
-        <CreateButton onPress={() => navigation.navigate("Create")}>
-          <Text>Create New</Text>
-        </CreateButton>
+      <View style={{ flex: 1, backgroundColor: "#e2e2e2" }}>
+        <Button
+          raised
+          buttonStyle={{ backgroundColor: "#a7a7a7" }}
+          title="Create New"
+          onPress={() => navigation.navigate("Create")}
+        />
 
         <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
-          {this.props.medicine.map(({ name, image, description }, i) => (
-            <Card title={name} image={{ uri: image }} key={i} editable={true}>
-              <Text style={{ marginBottom: 20 }}>{description}</Text>
-
-              <EditButton
-                underlayColor={"red"}
-                onPress={() => medicine.splice(i, 1)}
+          {medicine.map(({ name, image, description, id }) => (
+            <Card
+              title={name}
+              titleStyle={{
+                fontSize: 30,
+                color: "#a7a7a7"
+              }}
+              image={{ uri: image }}
+              imageStyle={{ height: 310 }}
+              key={id}
+              editable={true}
+            >
+              <Text
+                style={{
+                  marginBottom: 15,
+                  fontSize: 15,
+                  color: "#a7a7a7",
+                  marginLeft: 15
+                }}
               >
-                <Text style={{ fontSize: 30 }}>Remove</Text>
-              </EditButton>
+                {description}
+              </Text>
+
+              <Button
+                small
+                title={"Edit"}
+                buttonStyle={{ width: 200, backgroundColor: "#a7a7a7" }}
+                textStyle={{ fontSize: 15, letterSpacing: 10 }}
+                onPress={() => {
+                  this.props
+                    .editMedicine(id)
+                    .then(() => navigation.navigate("Profile"));
+                }}
+              />
             </Card>
           ))}
         </ScrollView>
         {/* MENU BUTTONS! */}
-        <Menu />
+        {/* <Menu navigate={this.props.navigation.navigate} /> */}
+        <ActionButton
+          buttonColor="#a7a7a7"
+          active={false}
+          style={{ elevation: 10, marginLeft: 10 }}
+          position={"right"}
+          autoInactive={true}
+        >
+          <ActionButton.Item
+            buttonColor="#a7a7a7"
+            onPress={() => navigation.navigate("Interaction")}
+          >
+            <Icon name="link-variant" style={styles.actionButtonIcon} />
+          </ActionButton.Item>
+        </ActionButton>
       </View>
     );
   }
@@ -83,7 +110,9 @@ class Home extends Component {
 
 const mapStateToProps = state => state;
 
-export default connect(mapStateToProps, { retrieveMedicine })(Home);
+export default connect(mapStateToProps, { retrieveMedicine, editMedicine })(
+  Home
+);
 
 // MENU BUTTONS STYLE
 const styles = StyleSheet.create({

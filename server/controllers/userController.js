@@ -30,6 +30,15 @@ const createMedicine = (req, res, next) => {
   const { name, image, description, rxcuis, id } = req.body;
   db
     .createMedicine([name, image, description, rxcuis, id])
+    .then(response => res.json(response))
+    .catch(console.log);
+};
+
+const editMedicine = (req, res, next) => {
+  const db = req.app.get("db");
+  const { id } = req.params;
+  db
+    .editMedicine([id])
     .then(response => res.json(response[0]))
     .catch(console.log);
 };
@@ -38,5 +47,6 @@ module.exports = {
   getUser,
   createUser,
   getMedicine,
-  createMedicine
+  createMedicine,
+  editMedicine
 };

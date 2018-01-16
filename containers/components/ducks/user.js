@@ -6,7 +6,8 @@ const initialState = {
   medicine: [],
   rxcuis: "",
   isLoading: false,
-  didError: false
+  didError: false,
+  activeMedicine: {}
 };
 
 //Action Types
@@ -14,6 +15,7 @@ const RETRIEVE_USER = "RETRIEVE_USER";
 const RETRIEVE_MEDICINE = "RETRIEVE_MEDICINE";
 const CREATE_MEDICINE = "CREATE_MEDICINE";
 const RETRIEVE_RXCUIS = "RETRIEVE_RXCUIS";
+const EDIT_MEDICINE = "EDIT_MEDICINE";
 
 //Action Creators
 export function retrieveUser(email, password) {
@@ -36,11 +38,17 @@ export function retrieveMedicine(id) {
   };
 }
 
-export function createMedicine(medicineObj) {
+export function createMedicine({ name, image, description, rxcuis, id }) {
   return {
     type: CREATE_MEDICINE,
     payload: axios
-      .post("http://localhost:3005/api/createmedicine", { medicineObj })
+      .post("http://localhost:3005/api/createmedicine", {
+        name,
+        image,
+        description,
+        rxcuis,
+        id
+      })
       .then(res => res.data)
       .catch(console.log)
   };
@@ -59,6 +67,16 @@ export function retrieveRxcuis(name) {
           return "";
         }
       })
+      .catch(console.log)
+  };
+}
+
+export function editMedicine(id) {
+  return {
+    type: EDIT_MEDICINE,
+    payload: axios
+      .get(`http://localhost:3005/api/edit/${id}`)
+      .then(response => response.data)
       .catch(console.log)
   };
 }
@@ -125,6 +143,22 @@ export default function user(state = initialState, action = {}) {
       });
 
     case `${RETRIEVE_RXCUIS}_REJECTED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didError: true
+      });
+
+    // EDIT MEDICINE
+    case `${EDIT_MEDICINE}_PENDING`:
+      return Object.assign({}, state, { isLoading: true });
+
+    case `${EDIT_MEDICINE}_FULFILLED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        activeMedicine: action.payload
+      });
+
+    case `${EDIT_MEDICINE}_REJECTED`:
       return Object.assign({}, state, {
         isLoading: false,
         didError: true

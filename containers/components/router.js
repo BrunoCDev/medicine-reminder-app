@@ -52,13 +52,13 @@ export const SignedIn = StackNavigator({
   Home: {
     screen: Home,
     navigationOptions: {
-      title: "Dashboard"
+      title: "Home"
     }
   },
   Interaction: {
     screen: Interaction,
     navigationOptions: {
-      title: "Interactions"
+      title: "Interaction"
     }
   },
   Profile: {

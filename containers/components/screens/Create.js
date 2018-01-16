@@ -12,19 +12,13 @@ import {
   ScrollView,
   Alert
 } from "react-native";
-import { Card } from "react-native-elements";
+import { Card, Button } from "react-native-elements";
 import styled from "styled-components/native";
 
 import { createMedicine, retrieveRxcuis } from "./../ducks/user";
 
 import { connect } from "react-redux";
-
-const EditButton = styled.TouchableHighlight`
-  background-color: #ddba79;
-  height: 50;
-  align-items: center;
-  justify-content: center;
-`;
+import Menu from "./../extras/Menu";
 
 class Create extends Component {
   constructor(props) {
@@ -69,7 +63,14 @@ class Create extends Component {
             rxcuis: this.props.rxcuis,
             id
           })
-          .then(() => navigation.navigate("Home"))
+          .then(res => {
+            console.log(res);
+            if (res.value.length) {
+              return this.props.navigation.navigate("Home");
+            } else {
+              Alert.alert("Error", "Something Went Wrong");
+            }
+          })
           .catch(console.log);
       } else {
         Alert.alert("Medicine not found", "Make sure the name is right!");
@@ -80,14 +81,10 @@ class Create extends Component {
   render() {
     const { navigation } = this.props;
     return (
-      <View style={{ flex: 1 }}>
-        <Card>
-          <ScrollView>
+      <View style={{ flex: 1, backgroundColor: "#e2e2e2" }}>
+        <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
+          <Card>
             <Image source={{ uri: this.state.image }} style={{ height: 300 }} />
-
-            <EditButton onPress={this.getImage} style={{ marginTop: 20 }}>
-              <Text>Get Image</Text>
-            </EditButton>
 
             <TextInput
               onChangeText={e => this.setState({ name: e })}
@@ -100,44 +97,56 @@ class Create extends Component {
               placeholder="Description"
               style={{ marginTop: 20 }}
             />
-            <EditButton
-              style={{
-                width: 50,
-                flex: 0.4,
-                alignSelf: "flex-start",
-                marginLeft: 30,
-                backgroundColor: "#cdc8b1"
-              }}
-              onPress={() => {
-                this.setState({
-                  image:
-                    "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png",
-                  name: "",
-                  description: "",
-                  rxcius: ""
-                });
-                navigation.navigate("Home");
-              }}
-            >
-              <Text>Cancel</Text>
-            </EditButton>
+            <View style={{ alignItems: "center" }}>
+              <Button
+                small
+                title={"Get Image"}
+                buttonStyle={{
+                  width: 200,
+                  backgroundColor: "#a7a7a7",
+                  marginTop: 20
+                }}
+                textStyle={{ fontSize: 15, letterSpacing: 10 }}
+                onPress={this.getImage}
+              />
+              <Button
+                small
+                title={"Cancel"}
+                buttonStyle={{
+                  width: 200,
+                  backgroundColor: "#a7a7a7",
+                  marginTop: 20,
+                  alignItems: "center"
+                }}
+                textStyle={{ fontSize: 15, letterSpacing: 10 }}
+                onPress={() => {
+                  this.setState({
+                    image:
+                      "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png",
+                    name: "",
+                    description: "",
+                    rxcius: ""
+                  });
+                  navigation.navigate("Home");
+                }}
+              />
 
-            <EditButton
-              style={{
-                width: 50,
-                flex: 0.4,
-                marginLeft: 70,
-                alignSelf: "flex-end",
-                backgroundColor: "#cdc8b1"
-              }}
-              onPress={() => {
-                this.createNewMedicine();
-              }}
-            >
-              <Text>Save</Text>
-            </EditButton>
-          </ScrollView>
-        </Card>
+              <Button
+                small
+                title={"Save"}
+                buttonStyle={{
+                  width: 200,
+                  backgroundColor: "#a7a7a7",
+                  marginTop: 20
+                }}
+                textStyle={{ fontSize: 15, letterSpacing: 10 }}
+                onPress={() => {
+                  this.createNewMedicine();
+                }}
+              />
+            </View>
+          </Card>
+        </ScrollView>
       </View>
     );
   }
