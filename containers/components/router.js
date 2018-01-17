@@ -52,25 +52,25 @@ export const SignedIn = StackNavigator({
   Home: {
     screen: Home,
     navigationOptions: {
-      title: "Home"
+      headerStyle: { height: 0 }
     }
   },
   Interaction: {
     screen: Interaction,
     navigationOptions: {
-      title: "Interaction"
+      headerStyle: { height: 0 }
     }
   },
   Profile: {
     screen: Profile,
     navigationOptions: {
-      title: "Profile"
+      headerStyle: { height: 0 }
     }
   },
   Create: {
     screen: Create,
     navigationOptions: {
-      title: "Create"
+      headerStyle: { height: 0 }
     }
   }
 });

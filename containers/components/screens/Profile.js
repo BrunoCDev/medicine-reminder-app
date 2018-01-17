@@ -22,6 +22,7 @@ class Profile extends Component {
   createNewAlarm() {
     const { description, name, id } = this.props.activeMedicine;
     let final = new Date(`${this.state.startDate}${this.state.time}`);
+    console.log(final);
     PushNotification.localNotificationSchedule({
       id: this.props.activeMedicine.id.toString(),
       title: name,
@@ -58,6 +59,16 @@ class Profile extends Component {
               }}
             >
               {activeMedicine.description}
+            </Text>
+            <Text
+              style={{
+                marginBottom: 15,
+                fontSize: 18,
+                textAlign: "center",
+                color: "#a7a7a7"
+              }}
+            >
+              Interval
             </Text>
             <Picker
               style={{ color: "#a7a7a7", marginBottom: 10 }}
@@ -107,7 +118,6 @@ class Profile extends Component {
                 });
               }}
             />
-
             <Button
               backgroundColor="#a7a7a7"
               buttonStyle={{ marginBottom: 15 }}

@@ -24,6 +24,7 @@ import com.imagepicker.ImagePickerPackage;
 import com.calendarevents.CalendarEventsPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+import com.BV.LinearGradient.LinearGradientPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -55,7 +56,8 @@ public class MainApplication extends Application implements ReactApplication {
         new ImagePickerPackage(),
         new CalendarEventsPackage(),
         new VectorIconsPackage(),
-        new ReactNativePushNotificationPackage()
+        new ReactNativePushNotificationPackage(),
+        new LinearGradientPackage()
         
       );
     }

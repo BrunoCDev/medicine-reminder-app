@@ -11,7 +11,8 @@ import {
   TextInput,
   Image,
   Alert,
-  StyleSheet
+  StyleSheet,
+  Animated
 } from "react-native";
 
 import { Card, Button } from "react-native-elements";
@@ -21,21 +22,41 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import styled from "styled-components/native";
 import Menu from "./../extras/Menu";
 
+import LinearGradient from "react-native-linear-gradient";
+
 import {
   retrieveMedicine,
   editMedicine,
   deleteMedicine
 } from "./../ducks/user";
 
+function incrementColor(color, step) {
+  const intColor = parseInt(color.substr(1), 16);
+  const newIntColor = (intColor + step).toString(16);
+  return `#${"0".repeat(6 - newIntColor.length)}${newIntColor}`;
+}
+
 class Home extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      count: 0,
+      colorTop: "#000000",
+      colorBottom: "#cccccc"
+    };
   }
 
   componentDidMount() {
     const { id } = this.props.user;
     this.props.retrieveMedicine(id);
+
+    setInterval(() => {
+      this.setState({
+        count: this.state.count + 1,
+        colorTop: incrementColor(this.state.colorTop, 1),
+        colorBottom: incrementColor(this.state.colorBottom, -1)
+      });
+    }, 20);
   }
 
   componentWillReceiveProps(newProps) {
@@ -44,77 +65,81 @@ class Home extends Component {
 
   render() {
     const { navigation, user, medicine } = this.props;
+
     return (
-      <View style={{ flex: 1, backgroundColor: "#e2e2e2" }}>
+      <View style={{ flex: 1, backgroundColor: this.state.colorTop }}>
         <Button
           raised
-          buttonStyle={{ backgroundColor: "#a7a7a7" }}
+          buttonStyle={{ backgroundColor: this.state.colorTop }}
           title="Create New"
           onPress={() => navigation.navigate("Create")}
         />
-
-        <ScrollView contentContainerStyle={{ paddingVertical: 15 }}>
-          {medicine.map(({ name, image, description, id }) => (
-            <Card
-              title={name}
-              titleStyle={{
-                fontSize: 30,
-                color: "#a7a7a7"
-              }}
-              image={{ uri: image }}
-              imageStyle={{ height: 250 }}
-              key={id}
-              editable={true}
-            >
-              <Text
-                style={{
-                  marginBottom: 15,
-                  fontSize: 15,
-                  color: "#a7a7a7",
-                  marginLeft: 15
+        <ScrollView>
+          <LinearGradient
+            colors={[this.state.colorBottom, this.state.colorTop]}
+          >
+            {medicine.map(({ name, image, description, id }, i) => (
+              <Card
+                containerStyle={{ backgroundColor: "transparent" }}
+                title={name}
+                titleStyle={{
+                  fontSize: 30,
+                  color: "#ffffff"
                 }}
+                image={{ uri: image }}
+                imageStyle={{ height: 300 }}
+                key={id}
+                editable={true}
               >
-                {description}
-              </Text>
+                <Text
+                  style={{
+                    marginBottom: 15,
+                    fontSize: 20,
+                    color: "#ffffff",
+                    marginLeft: 15
+                  }}
+                >
+                  {description}
+                </Text>
 
-              <Button
-                small
-                title={"Edit"}
-                buttonStyle={{ width: 200, backgroundColor: "#a7a7a7" }}
-                textStyle={{ fontSize: 15, letterSpacing: 10 }}
-                onPress={() => {
-                  this.props
-                    .editMedicine(id)
-                    .then(() => navigation.navigate("Profile"));
-                }}
-              />
-              <Button
-                small
-                title={"Delete"}
-                buttonStyle={{
-                  width: 200,
-                  backgroundColor: "#a7a7a7",
-                  marginTop: 20
-                }}
-                textStyle={{ fontSize: 15, letterSpacing: 10 }}
-                onPress={() => {
-                  this.props
-                    .deleteMedicine(id, this.props.user.id)
-                    .then(() =>
-                      this.props.retrieveMedicine(this.props.user.id)
-                    );
-                  Alert.alert("Medicine", "Medicine sucessfully removed");
-                }}
-              />
-            </Card>
-          ))}
+                <Button
+                  small
+                  title={"Set Alarm"}
+                  buttonStyle={{ width: 200, backgroundColor: "#cccccc" }}
+                  textStyle={{ fontSize: 15, letterSpacing: 10 }}
+                  onPress={() => {
+                    this.props
+                      .editMedicine(id)
+                      .then(() => navigation.navigate("Profile"));
+                  }}
+                />
+                <Button
+                  small
+                  title={"Delete"}
+                  buttonStyle={{
+                    width: 200,
+                    backgroundColor: "#cccccc",
+                    marginTop: 20
+                  }}
+                  textStyle={{ fontSize: 15, letterSpacing: 10 }}
+                  onPress={() => {
+                    this.props
+                      .deleteMedicine(id, this.props.user.id)
+                      .then(() =>
+                        this.props.retrieveMedicine(this.props.user.id)
+                      );
+                    Alert.alert("Medicine", "Medicine sucessfully removed");
+                  }}
+                />
+              </Card>
+            ))}
+          </LinearGradient>
         </ScrollView>
         {/* MENU BUTTONS! */}
-        {/* <Menu navigate={this.props.navigation.navigate} /> */}
         <ActionButton
           buttonColor="#a7a7a7"
           active={false}
-          style={{ elevation: 10, marginLeft: 10 }}
+          style={{ marginLeft: 10 }}
           position={"right"}
           autoInactive={true}
         >
