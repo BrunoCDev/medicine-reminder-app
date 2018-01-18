@@ -6,6 +6,7 @@ import SignIn from "./screens/SignIn";
 import Home from "./screens/Home";
 import Profile from "./screens/Profile";
 import Create from "./screens/Create";
+import ColorEditor from "./screens/ColorEditor";
 
 import Interaction from "./screens/Interaction";
 
@@ -69,6 +70,12 @@ export const SignedIn = StackNavigator({
   },
   Create: {
     screen: Create,
+    navigationOptions: {
+      headerStyle: { height: 0 }
+    }
+  },
+  Colors: {
+    screen: ColorEditor,
     navigationOptions: {
       headerStyle: { height: 0 }
     }

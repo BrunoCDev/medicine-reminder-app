@@ -7,7 +7,15 @@ const initialState = {
   rxcuis: "",
   isLoading: false,
   didError: false,
-  activeMedicine: {}
+  activeMedicine: {},
+  backgroundColors: {
+    firstColor: "rgb(33,33,33)",
+    secondColor: "rgb(18,18,18)",
+    thirdColor: "rgb(83,83,83)",
+    buttonColor: "#1db954",
+    cardColor: "#535353",
+    textColor: "white"
+  }
 };
 
 //Action Types
@@ -17,13 +25,22 @@ const CREATE_MEDICINE = "CREATE_MEDICINE";
 const RETRIEVE_RXCUIS = "RETRIEVE_RXCUIS";
 const EDIT_MEDICINE = "EDIT_MEDICINE";
 const DELETE_MEDICINE = "DELETE_MEDICINE";
+const BACKGROUND_COLORS = "BACKGROUND_COLORS";
 
 //Action Creators
+
+export function backgroundColors(obj) {
+  return {
+    type: BACKGROUND_COLORS,
+    payload: obj
+  };
+}
+
 export function retrieveUser(email, password) {
   return {
     type: RETRIEVE_USER,
     payload: axios
-      .post("http://localhost:3005/api/auth", { email, password })
+      .post("http://localhost:3005/api/auth/", { email, password })
       .then(response => response.data)
       .catch(console.log)
   };
@@ -192,6 +209,13 @@ export default function user(state = initialState, action = {}) {
       return Object.assign({}, state, {
         isLoading: false,
         didError: true
+      });
+
+    // BACKGROUND COLORS
+    case BACKGROUND_COLORS:
+      return Object.assign({}, state, {
+        isLoading: false,
+        backgroundColors: action.payload
       });
 
     default:
