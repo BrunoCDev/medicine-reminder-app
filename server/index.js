@@ -43,6 +43,9 @@ app.get("/api/medicine/:id", uc.getMedicine);
 app.post("/api/createmedicine", uc.createMedicine);
 app.get("/api/edit/:id", uc.editMedicine);
 app.delete("/api/deletemedicine", uc.deleteMedicine);
+app.post("/api/colors", uc.addColors);
+app.get("/api/colors/:id", uc.getColors);
+app.post("/api/colors/update", uc.updateColors);
 
 // APP LISTEN
 app.listen(PORT, () => {

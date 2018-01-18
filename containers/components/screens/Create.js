@@ -19,6 +19,7 @@ import { createMedicine, retrieveRxcuis } from "./../ducks/user";
 
 import { connect } from "react-redux";
 import Menu from "./../extras/Menu";
+import AnimatedLinearGradient from "react-native-animated-linear-gradient";
 
 class Create extends Component {
   constructor(props) {
@@ -64,7 +65,6 @@ class Create extends Component {
             id
           })
           .then(res => {
-            console.log(res);
             if (res.value.length) {
               return this.props.navigation.navigate("Home");
             } else {
@@ -79,74 +79,109 @@ class Create extends Component {
   }
 
   render() {
-    const { navigation } = this.props;
+    const { navigation, backgroundColors } = this.props;
     return (
       <View style={{ flex: 1, backgroundColor: "#e2e2e2" }}>
-        <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
-          <Card>
-            <Image source={{ uri: this.state.image }} style={{ height: 300 }} />
-
-            <TextInput
-              onChangeText={e => this.setState({ name: e })}
-              placeholder="Name"
-              style={{ marginTop: 20 }}
-            />
-
-            <TextInput
-              onChangeText={e => this.setState({ description: e })}
-              placeholder="Description"
-              style={{ marginTop: 20 }}
-            />
-            <View style={{ alignItems: "center" }}>
-              <Button
-                small
-                title={"Get Image"}
-                buttonStyle={{
-                  width: 200,
-                  backgroundColor: "#a7a7a7",
-                  marginTop: 20
-                }}
-                textStyle={{ fontSize: 15, letterSpacing: 10 }}
-                onPress={this.getImage}
+        <AnimatedLinearGradient
+          customColors={[
+            `${backgroundColors.first}`,
+            `${backgroundColors.second}`,
+            `${backgroundColors.third}`
+          ]}
+        >
+          <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
+            <Card
+              containerStyle={{
+                backgroundColor: `${backgroundColors.card}`
+              }}
+            >
+              <Image
+                source={{ uri: this.state.image }}
+                style={{ height: 300 }}
               />
-              <Button
-                small
-                title={"Cancel"}
-                buttonStyle={{
-                  width: 200,
-                  backgroundColor: "#a7a7a7",
+
+              <TextInput
+                onChangeText={e => this.setState({ name: e })}
+                placeholder="Medicine Name"
+                placeholderTextColor={`${backgroundColors.textcolor}`}
+                style={{
                   marginTop: 20,
-                  alignItems: "center"
-                }}
-                textStyle={{ fontSize: 15, letterSpacing: 10 }}
-                onPress={() => {
-                  this.setState({
-                    image:
-                      "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png",
-                    name: "",
-                    description: "",
-                    rxcius: ""
-                  });
-                  navigation.navigate("Home");
+                  color: `${backgroundColors.textcolor}`
                 }}
               />
 
-              <Button
-                small
-                title={"Save"}
-                buttonStyle={{
-                  width: 200,
-                  backgroundColor: "#a7a7a7",
-                  marginTop: 20
-                }}
-                textStyle={{ fontSize: 15, letterSpacing: 10 }}
-                onPress={() => {
-                  this.createNewMedicine();
+              <TextInput
+                onChangeText={e => this.setState({ description: e })}
+                placeholder="Description"
+                placeholderTextColor={`${backgroundColors.textcolor}`}
+                style={{
+                  marginTop: 20,
+                  color: `${backgroundColors.textcolor}`
                 }}
               />
-            </View>
-          </Card>
-        </ScrollView>
+              <View style={{ alignItems: "center" }}>
+                <Button
+                  small
+                  title={"Get Image"}
+                  buttonStyle={{
+                    width: 200,
+                    backgroundColor: `${backgroundColors.button}`,
+                    marginTop: 20
+                  }}
+                  textStyle={{
+                    fontSize: 15,
+                    letterSpacing: 10,
+                    color: `${backgroundColors.textcolor}`
+                  }}
+                  onPress={this.getImage}
+                />
+                <Button
+                  small
+                  title={"Cancel"}
+                  buttonStyle={{
+                    width: 200,
+                    backgroundColor: `${backgroundColors.button}`,
+                    marginTop: 20,
+                    alignItems: "center"
+                  }}
+                  textStyle={{
+                    fontSize: 15,
+                    letterSpacing: 10,
+                    color: `${backgroundColors.textcolor}`
+                  }}
+                  onPress={() => {
+                    this.setState({
+                      image:
+                        "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png",
+                      name: "",
+                      description: "",
+                      rxcius: ""
+                    });
+                    navigation.navigate("Home");
+                  }}
+                />
+
+                <Button
+                  small
+                  title={"Save"}
+                  buttonStyle={{
+                    width: 200,
+                    backgroundColor: `${backgroundColors.button}`,
+                    marginTop: 20
+                  }}
+                  textStyle={{
+                    fontSize: 15,
+                    letterSpacing: 10,
+                    color: `${backgroundColors.textcolor}`
+                  }}
+                  onPress={() => {
+                    this.createNewMedicine();
+                  }}
+                />
+              </View>
+            </Card>
+          </ScrollView>
+        </AnimatedLinearGradient>
       </View>
     );
   }

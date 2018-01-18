@@ -52,11 +52,73 @@ const deleteMedicine = (req, res, next) => {
     .catch(console.log);
 };
 
+const addColors = (req, res, next) => {
+  const db = req.app.get("db");
+  const {
+    firstColor,
+    secondColor,
+    thirdColor,
+    buttonColor,
+    cardColor,
+    textColor,
+    id
+  } = req.body;
+  db
+    .addColors([
+      firstColor,
+      secondColor,
+      thirdColor,
+      buttonColor,
+      cardColor,
+      textColor,
+      id
+    ])
+    .then(response => res.json(response))
+    .catch(console.log);
+};
+
+const getColors = (req, res, next) => {
+  const db = req.app.get("db");
+  const { id } = req.params;
+  db
+    .getColors([id])
+    .then(response => res.json(response))
+    .catch(console.log);
+};
+
+const updateColors = (req, res, next) => {
+  const db = req.app.get("db");
+  const {
+    firstColor,
+    secondColor,
+    thirdColor,
+    buttonColor,
+    cardColor,
+    textColor,
+    id
+  } = req.body;
+  db
+    .updateColors([
+      firstColor,
+      secondColor,
+      thirdColor,
+      buttonColor,
+      cardColor,
+      textColor,
+      id
+    ])
+    .then(response => res.json(response))
+    .catch(console.log);
+};
+
 module.exports = {
   getUser,
   createUser,
   getMedicine,
   createMedicine,
   editMedicine,
-  deleteMedicine
+  deleteMedicine,
+  addColors,
+  getColors,
+  updateColors
 };

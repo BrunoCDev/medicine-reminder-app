@@ -9,12 +9,12 @@ const initialState = {
   didError: false,
   activeMedicine: {},
   backgroundColors: {
-    firstColor: "rgb(33,33,33)",
-    secondColor: "rgb(18,18,18)",
-    thirdColor: "rgb(83,83,83)",
-    buttonColor: "#1db954",
-    cardColor: "#535353",
-    textColor: "white"
+    first: "rgb(33,33,33)",
+    second: "rgb(18,18,18)",
+    third: "rgb(83,83,83)",
+    button: "#1db954",
+    card: "#535353",
+    textcolor: "white"
   }
 };
 
@@ -25,14 +25,87 @@ const CREATE_MEDICINE = "CREATE_MEDICINE";
 const RETRIEVE_RXCUIS = "RETRIEVE_RXCUIS";
 const EDIT_MEDICINE = "EDIT_MEDICINE";
 const DELETE_MEDICINE = "DELETE_MEDICINE";
-const BACKGROUND_COLORS = "BACKGROUND_COLORS";
+const CREATE_COLORS = "CREATE_COLORS";
+const GET_COLORS = "GET_COLORS";
+const UPDATE_COLORS = "UPDATE_COLORS";
 
 //Action Creators
 
-export function backgroundColors(obj) {
+export function createColors({
+  firstColor,
+  secondColor,
+  thirdColor,
+  buttonColor,
+  cardColor,
+  textColor,
+  id
+}) {
   return {
-    type: BACKGROUND_COLORS,
-    payload: obj
+    type: CREATE_COLORS,
+    payload: axios
+      .post("http://localhost:3005/api/colors", {
+        firstColor,
+        secondColor,
+        thirdColor,
+        buttonColor,
+        cardColor,
+        textColor,
+        id
+      })
+      .then(response => response.data)
+      .catch(console.log)
+  };
+}
+
+export function updateColors({
+  firstColor,
+  secondColor,
+  thirdColor,
+  buttonColor,
+  cardColor,
+  textColor,
+  id
+}) {
+  return {
+    type: UPDATE_COLORS,
+    payload: axios
+      .post("http://localhost:3005/api/colors/update", {
+        firstColor,
+        secondColor,
+        thirdColor,
+        buttonColor,
+        cardColor,
+        textColor,
+        id
+      })
+      .then(response => response.data)
+      .catch(console.log)
+  };
+}
+
+export function getColors(id) {
+  return {
+    type: GET_COLORS,
+    payload: axios
+      .get(`http://localhost:3005/api/colors/${id}`)
+      .then(response => {
+        if (response.data.length) {
+          return response.data;
+        } else {
+          return [
+            {
+              first: "rgb(33,33,33)",
+              second: "rgb(18,18,18)",
+              third: "rgb(83,83,83)",
+              button: "#1db954",
+              card: "#535353",
+              textcolor: "white"
+            }
+          ];
+        }
+      })
+
+      .catch(console.log)
   };
 }
 
@@ -211,11 +284,52 @@ export default function user(state = initialState, action = {}) {
         didError: true
       });
 
-    // BACKGROUND COLORS
-    case BACKGROUND_COLORS:
+    // CREATE COLORS
+    case `${CREATE_COLORS}_PENDING`:
+      return Object.assign({}, state, { isLoading: true });
+
+    case `${CREATE_COLORS}_FULFILLED`:
       return Object.assign({}, state, {
         isLoading: false,
-        backgroundColors: action.payload
+        backgroundColors: action.payload[0]
+      });
+
+    case `${CREATE_COLORS}_REJECTED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didError: true
+      });
+
+    // GET COLORS
+    case `${GET_COLORS}_PENDING`:
+      return Object.assign({}, state, { isLoading: true });
+
+    case `${GET_COLORS}_FULFILLED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        backgroundColors: action.payload[0]
+      });
+
+    case `${GET_COLORS}_REJECTED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didError: true
+      });
+
+    // UPDATE COLORS
+    case `${UPDATE_COLORS}_PENDING`:
+      return Object.assign({}, state, { isLoading: true });
+
+    case `${UPDATE_COLORS}_FULFILLED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        backgroundColors: action.payload[0]
+      });
+
+    case `${UPDATE_COLORS}_REJECTED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didError: true
       });
 
     default:

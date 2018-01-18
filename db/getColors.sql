@@ -1,0 +1,1 @@
+SELECT * FROM colors WHERE user_id = $1;
