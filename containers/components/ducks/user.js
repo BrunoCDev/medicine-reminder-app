@@ -104,7 +104,6 @@ export function getColors(id) {
           ];
         }
       })
-
       .catch(console.log)
   };
 }

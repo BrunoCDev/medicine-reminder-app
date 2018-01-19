@@ -38,14 +38,27 @@ class Interaction extends Component {
           axios
             .get(`${this.state.int}${this.state.str}`)
             .then(res2 => {
-              res2.data.fullInteractionTypeGroup[0].fullInteractionType.map(
-                (el, index) => {
-                  this.state.description.push(
-                    el.interactionPair[0].description
-                  );
-                  this.setState({ loaded: true });
-                }
-              );
+              if (
+                res2.data.fullInteractionTypeGroup[0].fullInteractionType.length
+              ) {
+                Alert.alert(
+                  "Bad Reactions Found",
+                  `You probably shouldn't take these medicines together`
+                );
+                res2.data.fullInteractionTypeGroup[0].fullInteractionType.map(
+                  (el, index) => {
+                    this.state.description.push(
+                      el.interactionPair[0].description
+                    );
+                    this.setState({ loaded: true });
+                  }
+                );
+              } else {
+                Alert.alert(
+                  "No Bad Reactions Foud",
+                  `We didn't find any bad reactions between these medicines`
+                );
+              }
             })
             .catch(console.log);
         })

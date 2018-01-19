@@ -12,6 +12,9 @@ import { Card, Button, Text } from "react-native-elements";
 import { connect } from "react-redux";
 import PushController from "./../extras/PushController";
 import PushNotification from "react-native-push-notification";
+import AnimatedLinearGradient, {
+  presetColors
+} from "react-native-animated-linear-gradient";
 
 class Profile extends Component {
   constructor(props) {
@@ -22,7 +25,7 @@ class Profile extends Component {
   createNewAlarm() {
     const { description, name, id } = this.props.activeMedicine;
     let final = new Date(`${this.state.startDate}${this.state.time}`);
-    // console.log(final);
+    console.log(final)
     PushNotification.localNotificationSchedule({
       id: this.props.activeMedicine.id.toString(),
       title: name,
@@ -36,14 +39,25 @@ class Profile extends Component {
   }
 
   render() {
-    const { navigation, activeMedicine } = this.props;
+    const { navigation, activeMedicine, backgroundColors } = this.props;
     return (
       <View style={{ paddingVertical: 20, backgroundColor: "#e2e2e2" }}>
+        <AnimatedLinearGradient
+          customColors={[
+            `${backgroundColors.first}`,
+            `${backgroundColors.second}`,
+            `${backgroundColors.third}`
+          ]}
+          speed={5000}
+        />
         <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
           <Card
+            containerStyle={{
+              backgroundColor: `${backgroundColors.card}`
+            }}
             titleStyle={{
               fontSize: 30,
-              color: "#a7a7a7"
+              color: `${backgroundColors.textcolor}`
             }}
             title={activeMedicine.name}
             image={{ uri: activeMedicine.image }}
@@ -55,7 +69,7 @@ class Profile extends Component {
                 marginBottom: 15,
                 fontSize: 18,
                 textAlign: "center",
-                color: "#a7a7a7"
+                color: `${backgroundColors.textcolor}`
               }}
             >
               {activeMedicine.description}
@@ -65,13 +79,16 @@ class Profile extends Component {
                 marginBottom: 15,
                 fontSize: 18,
                 textAlign: "center",
-                color: "#a7a7a7"
+                color: `${backgroundColors.textcolor}`
               }}
             >
               Interval
             </Text>
             <Picker
-              style={{ color: "#a7a7a7", marginBottom: 10 }}
+              style={{
+                color: `${backgroundColors.textcolor}`,
+                marginBottom: 10
+              }}
               selectedValue={this.state.interval}
               onValueChange={(itemValue, itemIndex) =>
                 this.setState({ interval: itemValue })
@@ -84,7 +101,7 @@ class Profile extends Component {
             </Picker>
 
             <Button
-              backgroundColor="#a7a7a7"
+              backgroundColor={`${backgroundColors.button}`}
               title="Set Date/Hour"
               buttonStyle={{ marginBottom: 15 }}
               onPress={() => {
@@ -119,18 +136,18 @@ class Profile extends Component {
               }}
             />
             <Button
-              backgroundColor="#a7a7a7"
+              backgroundColor={`${backgroundColors.button}`}
               buttonStyle={{ marginBottom: 15 }}
               title="Add Alarm"
               onPress={() => this.createNewAlarm()}
             />
 
             <Button
-              backgroundColor="#a7a7a7"
+              backgroundColor={`${backgroundColors.button}`}
               buttonStyle={{ marginBottom: 15 }}
               title="Delete Alarm"
               onPress={() => {
-                PushNotification.cancelAllLocalNotifications({
+                PushNotification.cancelLocalNotifications({
                   id: this.props.activeMedicine.id.toString()
                 });
                 Alert.alert("Alarm", "Alarm was sucessfully removed");

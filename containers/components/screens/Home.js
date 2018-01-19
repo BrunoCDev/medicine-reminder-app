@@ -57,7 +57,7 @@ class Home extends Component {
             `${backgroundColors.second}`,
             `${backgroundColors.third}`
           ]}
-          speed={6000}
+          speed={5000}
         />
         <Button
           raised

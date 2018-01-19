@@ -20,10 +20,6 @@ class ColorEditor extends Component {
     };
   }
 
-  componentDidMount() {
-    console.log(this.props);
-  }
-
   render() {
     const {
       firstColor,
@@ -43,73 +39,88 @@ class ColorEditor extends Component {
     } = this.props.backgroundColors;
     return (
       <View style={{ flex: 1 }}>
-        <Text>Background Colors</Text>
+        <Text style={{ marginTop: 20, fontSize: 20, marginLeft: 10 }}>
+          Background Colors
+        </Text>
         <TextInput
+          style={{ marginLeft: 10 }}
           placeholder={`${first}`}
           onChangeText={e => this.setState({ firstColor: e.toLowerCase() })}
         />
         <TextInput
+          style={{ marginLeft: 10 }}
           placeholder={`${second}`}
           onChangeText={e => this.setState({ secondColor: e.toLowerCase() })}
         />
         <TextInput
+          style={{ marginLeft: 10 }}
           placeholder={`${third}`}
           onChangeText={e => this.setState({ thirdColor: e.toLowerCase() })}
         />
 
-        <Text>Button Color</Text>
+        <Text style={{ marginTop: 20, fontSize: 20, marginLeft: 10 }}>
+          Button Color
+        </Text>
         <TextInput
+          style={{ marginLeft: 10 }}
           placeholder={`${button}`}
           onChangeText={e => this.setState({ buttonColor: e.toLowerCase() })}
         />
 
-        <Text>Card Color</Text>
+        <Text style={{ marginTop: 20, fontSize: 20, marginLeft: 10 }}>
+          Card Color
+        </Text>
         <TextInput
+          style={{ marginLeft: 10 }}
           placeholder={`${card}`}
           onChangeText={e => this.setState({ cardColor: e.toLowerCase() })}
         />
 
-        <Text>Text Color</Text>
+        <Text style={{ marginTop: 20, fontSize: 20, marginLeft: 10 }}>
+          Text Color
+        </Text>
         <TextInput
+          style={{ marginLeft: 10 }}
           placeholder={`${textcolor}`}
           onChangeText={e => this.setState({ textColor: e.toLowerCase() })}
         />
-
-        {this.props.backgroundColors.id ? (
-          <Button
-            title="Update"
-            onPress={() => {
-              const { id } = this.props.user;
-              this.props.updateColors({
-                firstColor: this.state.firstColor,
-                secondColor: this.state.secondColor,
-                thirdColor: this.state.thirdColor,
-                buttonColor: this.state.buttonColor,
-                cardColor: this.state.cardColor,
-                textColor: this.state.textColor,
-                id: id
-              });
-              this.props.navigation.navigate("Home");
-            }}
-          />
-        ) : (
-          <Button
-            title="Save"
-            onPress={() => {
-              const { id } = this.props.user;
-              this.props.createColors({
-                firstColor: this.state.firstColor,
-                secondColor: this.state.secondColor,
-                thirdColor: this.state.thirdColor,
-                buttonColor: this.state.buttonColor,
-                cardColor: this.state.cardColor,
-                textColor: this.state.textColor,
-                id: id
-              });
-              this.props.navigation.navigate("Home");
-            }}
-          />
-        )}
+        <View style={{ marginTop: 20 }}>
+          {this.props.backgroundColors.id ? (
+            <Button
+              title="Update"
+              onPress={() => {
+                const { id } = this.props.user;
+                this.props.updateColors({
+                  firstColor: this.state.firstColor,
+                  secondColor: this.state.secondColor,
+                  thirdColor: this.state.thirdColor,
+                  buttonColor: this.state.buttonColor,
+                  cardColor: this.state.cardColor,
+                  textColor: this.state.textColor,
+                  id: id
+                });
+                this.props.navigation.navigate("Home");
+              }}
+            />
+          ) : (
+            <Button
+              title="Save"
+              onPress={() => {
+                const { id } = this.props.user;
+                this.props.createColors({
+                  firstColor: this.state.firstColor,
+                  secondColor: this.state.secondColor,
+                  thirdColor: this.state.thirdColor,
+                  buttonColor: this.state.buttonColor,
+                  cardColor: this.state.cardColor,
+                  textColor: this.state.textColor,
+                  id: id
+                });
+                this.props.navigation.navigate("Home");
+              }}
+            />
+          )}
+        </View>
       </View>
     );
   }

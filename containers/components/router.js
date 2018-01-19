@@ -53,31 +53,31 @@ export const SignedIn = StackNavigator({
   Home: {
     screen: Home,
     navigationOptions: {
-      headerStyle: { height: 0 }
+      title: "Home"
     }
   },
   Interaction: {
     screen: Interaction,
     navigationOptions: {
-      headerStyle: { height: 0 }
+      title: "Interactions"
     }
   },
   Profile: {
     screen: Profile,
     navigationOptions: {
-      headerStyle: { height: 0 }
+      title: "Medicine Editor"
     }
   },
   Create: {
     screen: Create,
     navigationOptions: {
-      headerStyle: { height: 0 }
+      title: "Create"
     }
   },
   Colors: {
     screen: ColorEditor,
     navigationOptions: {
-      headerStyle: { height: 0 }
+      title: "Color Editor"
     }
   }
 });
