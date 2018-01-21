@@ -11,12 +11,12 @@ class ColorEditor extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      firstColor: "",
-      secondColor: "",
-      thirdColor: "",
-      buttonColor: "",
-      cardColor: "",
-      textColor: ""
+      firstColor: `${this.props.backgroundColors.first}`,
+      secondColor: `${this.props.backgroundColors.second}`,
+      thirdColor: `${this.props.backgroundColors.third}`,
+      buttonColor: `${this.props.backgroundColors.button}`,
+      cardColor: `${this.props.backgroundColors.card}`,
+      textColor: `${this.props.backgroundColors.textcolor}`
     };
   }
 
@@ -68,7 +68,7 @@ class ColorEditor extends Component {
         />
 
         <Text style={{ marginTop: 20, fontSize: 20, marginLeft: 10 }}>
-          Card Color
+          Card/Footer Color
         </Text>
         <TextInput
           style={{ marginLeft: 10 }}

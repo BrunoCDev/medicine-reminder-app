@@ -6,13 +6,29 @@ import {
   StyleSheet,
   View,
   Image,
-  Text,
   TextInput,
   TouchableHighlight,
   ScrollView,
   Alert
 } from "react-native";
-import { Card, Button } from "react-native-elements";
+
+import {
+  Container,
+  Content,
+  Card,
+  CardItem,
+  Thumbnail,
+  Text,
+  Button,
+  Left,
+  Body,
+  Right,
+  Footer,
+  FooterTab
+} from "native-base";
+
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+
 import styled from "styled-components/native";
 
 import { createMedicine, retrieveRxcuis } from "./../ducks/user";
@@ -53,9 +69,8 @@ class Create extends Component {
   createNewMedicine() {
     const { id } = this.props.user;
     const { image, name, description } = this.state;
-
     this.props.retrieveRxcuis(name).then(() => {
-      if (this.props.rxcuis.length) {
+      if (this.props.rxcuis) {
         this.props
           .createMedicine({
             name,
@@ -65,7 +80,7 @@ class Create extends Component {
             id
           })
           .then(res => {
-            if (res.value.length) {
+            if (res.value) {
               return this.props.navigation.navigate("Home");
             } else {
               Alert.alert("Error", "Something Went Wrong");
@@ -81,7 +96,66 @@ class Create extends Component {
   render() {
     const { navigation, backgroundColors } = this.props;
     return (
-      <View style={{ flex: 1, backgroundColor: "#e2e2e2" }}>
+      <Container>
+        <Content>
+          <Card>
+            <CardItem>
+              <Left>
+                <Thumbnail
+                  source={{
+                    uri: !this.state.image
+                      ? "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png"
+                      : this.state.image
+                  }}
+                />
+                <Body>
+                  <TextInput
+                    placeholder="Medicine Name"
+                    onChangeText={e => this.setState({ name: e })}
+                  />
+                  <TextInput
+                    note
+                    placeholder="Medicine Description"
+                    onChangeText={e => this.setState({ description: e })}
+                  />
+                </Body>
+              </Left>
+            </CardItem>
+            <CardItem cardBody>
+              <TouchableHighlight
+                onPress={this.getImage}
+                style={{
+                  height: 250,
+                  width: null,
+                  flex: 1,
+                  color: "transparent"
+                }}
+              >
+                <Image
+                  source={{
+                    uri: !this.state.image
+                      ? "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png"
+                      : this.state.image
+                  }}
+                  style={{ height: 250, width: null, flex: 1 }}
+                />
+              </TouchableHighlight>
+            </CardItem>
+          </Card>
+        </Content>
+        <Footer>
+          <FooterTab>
+            <Button onPress={() => this.createNewMedicine()}>
+              <Text>Save</Text>
+            </Button>
+          </FooterTab>
+        </Footer>
+      </Container>
+    );
+  }
+}
+{
+  /* <View style={{ flex: 1, backgroundColor: "#e2e2e2" }}>
         <AnimatedLinearGradient
           customColors={[
             `${backgroundColors.first}`,
@@ -182,9 +256,7 @@ class Create extends Component {
             </Card>
           </ScrollView>
         </AnimatedLinearGradient>
-      </View>
-    );
-  }
+      </View> */
 }
 
 const mapStateToProps = state => state;

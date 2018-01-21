@@ -4,6 +4,7 @@ import axios from "axios";
 const initialState = {
   user: {},
   medicine: [],
+  alarm: {},
   rxcuis: "",
   isLoading: false,
   didError: false,
@@ -145,11 +146,13 @@ export function createMedicine({ name, image, description, rxcuis, id }) {
 }
 
 export function retrieveRxcuis(name) {
+  console.log("name", name);
   return {
     type: RETRIEVE_RXCUIS,
     payload: axios
       .get(`https://rxnav.nlm.nih.gov/REST/rxcui?name=${name}`)
       .then(res => {
+        console.log("response", res);
         const rxcuis = res.data.idGroup.rxnormId[0];
         if (rxcuis) {
           return rxcuis;
