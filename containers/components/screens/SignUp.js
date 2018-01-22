@@ -2,8 +2,10 @@ import React, { Component } from "react";
 import { View, Alert } from "react-native";
 import { Card, Button, FormLabel, FormInput } from "react-native-elements";
 import { onCreateAccount } from "./../auth";
+import { connect } from "react-redux";
+import { retrieveUser } from "./../ducks/user";
 
-export default class extends Component {
+class SignUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -43,9 +45,15 @@ export default class extends Component {
             onPress={() => {
               if (password !== password2) {
                 Alert.alert("Something went wrong", "Passwords do not match");
+              } else if (!this.state.email.includes("@")) {
+                Alert.alert(
+                  "There was a problem",
+                  "Please enter a valid Email"
+                );
               } else {
                 onCreateAccount(email, password).then(res => {
                   if (res.id) {
+                    this.props.retrieveUser(email, password);
                     navigation.navigate("SignedIn");
                   } else {
                     Alert.alert(
@@ -69,3 +77,7 @@ export default class extends Component {
     );
   }
 }
+
+const mapStateToProps = state => state;
+
+export default connect(mapStateToProps, { retrieveUser })(SignUp);

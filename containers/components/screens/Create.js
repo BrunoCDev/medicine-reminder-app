@@ -66,9 +66,6 @@ class Create extends Component {
     this.getImage = this.getImage.bind(this);
   }
 
-  componentDidMount() {
-    PushNotification.cancelAllLocalNotifications();
-  }
   getImage = () => {
     ImagePicker.showImagePicker({ cameraType: "back" }, response => {
       let source = response.uri;
@@ -116,7 +113,7 @@ class Create extends Component {
                       id: medicineId,
                       title: name,
                       message: description,
-                      largeIcon: this.state.image,
+                      bigText: { uri: this.state.image },
                       vibrate: true,
                       vibration: 1000,
                       repeatType: interval,
@@ -209,6 +206,9 @@ class Create extends Component {
               <Left />
               <Body>
                 <Button
+                  style={{
+                    backgroundColor: this.props.backgroundColors.button
+                  }}
                   onPress={() => {
                     const { action, date } = DatePickerAndroid.open({
                       date: new Date()
@@ -240,7 +240,11 @@ class Create extends Component {
                     });
                   }}
                 >
-                  <Text>Set Date</Text>
+                  <Text
+                    style={{ color: this.props.backgroundColors.textcolor }}
+                  >
+                    Set Date
+                  </Text>
                 </Button>
               </Body>
               <Right>
@@ -252,8 +256,13 @@ class Create extends Component {
         </Content>
         <Footer>
           <FooterTab>
-            <Button onPress={() => this.createNewMedicine()}>
-              <Text>Save</Text>
+            <Button
+              onPress={() => this.createNewMedicine()}
+              style={{ backgroundColor: this.props.backgroundColors.button }}
+            >
+              <Text style={{ color: this.props.backgroundColors.textcolor }}>
+                Save
+              </Text>
             </Button>
           </FooterTab>
         </Footer>

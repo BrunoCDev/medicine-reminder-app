@@ -39,7 +39,7 @@ class ColorEditor extends Component {
     } = this.props.backgroundColors;
     return (
       <View style={{ flex: 1 }}>
-        <Text style={{ marginTop: 20, fontSize: 20, marginLeft: 10 }}>
+        <Text style={{ marginTop: 10, fontSize: 20, marginLeft: 10 }}>
           Background Colors
         </Text>
         <TextInput
@@ -88,6 +88,7 @@ class ColorEditor extends Component {
           {this.props.backgroundColors.id ? (
             <Button
               title="Update"
+              color={this.props.backgroundColors.button}
               onPress={() => {
                 const { id } = this.props.user;
                 this.props.updateColors({
@@ -105,7 +106,9 @@ class ColorEditor extends Component {
           ) : (
             <Button
               title="Save"
+              color={this.props.backgroundColors.button}
               onPress={() => {
+                Alert.alert("Color Editor", "Theme was sucessfully saved!");
                 const { id } = this.props.user;
                 this.props.createColors({
                   firstColor: this.state.firstColor,

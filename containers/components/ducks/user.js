@@ -13,7 +13,7 @@ const initialState = {
     first: "rgb(33,33,33)",
     second: "rgb(18,18,18)",
     third: "rgb(83,83,83)",
-    button: "#1db954",
+    button: "grey",
     card: "#535353",
     textcolor: "white"
   }
@@ -164,7 +164,7 @@ export function getColors(id) {
               first: "rgb(33,33,33)",
               second: "rgb(18,18,18)",
               third: "rgb(83,83,83)",
-              button: "#1db954",
+              button: "grey",
               card: "#535353",
               textcolor: "white"
             }
