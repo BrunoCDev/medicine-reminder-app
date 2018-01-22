@@ -111,6 +111,42 @@ const updateColors = (req, res, next) => {
     .catch(console.log);
 };
 
+const addAlarm = (req, res, next) => {
+  const db = req.app.get("db");
+  const { medicineId, id, interval, final } = req.body;
+  db
+    .addAlarm([medicineId, id, interval, final])
+    .then(response => res.json(response))
+    .catch(console.log);
+};
+
+const getAlarm = (req, res, next) => {
+  const db = req.app.get("db");
+  const { medicineId, id } = req.body;
+  db
+    .getAlarm([medicineId, id])
+    .then(response => res.json(response))
+    .catch(console.log);
+};
+
+const deleteAlarm = (req, res, next) => {
+  const db = req.app.get("db");
+  const { medicineId, id } = req.body;
+  db
+    .deleteAlarm([medicineId, id])
+    .then(response => res.json(response))
+    .catch(console.log);
+};
+
+const createActiveMedicine = (req, res, next) => {
+  const db = req.app.get("db");
+  const { name, image, description, rxcuis, id } = req.body;
+  db
+    .createActiveMedicine([name, image, description, rxcuis, id])
+    .then(response => res.json(response))
+    .catch(console.log);
+};
+
 module.exports = {
   getUser,
   createUser,
@@ -120,5 +156,9 @@ module.exports = {
   deleteMedicine,
   addColors,
   getColors,
-  updateColors
+  updateColors,
+  addAlarm,
+  getAlarm,
+  deleteAlarm,
+  createActiveMedicine
 };

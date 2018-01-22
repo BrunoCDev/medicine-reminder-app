@@ -16,25 +16,36 @@ import AnimatedLinearGradient, {
   presetColors
 } from "react-native-animated-linear-gradient";
 
+import { getAlarm, deleteAlarm } from "./../ducks/user";
+
 class Profile extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      interval: ""
+    };
+  }
+
+  componentDidMount() {
+    this.props.getAlarm(this.props.activeMedicine.id, this.props.user.id);
   }
 
   createNewAlarm() {
-    const { description, name, id } = this.props.activeMedicine;
+    const { id } = this.props.user;
+    const { description, name } = this.props.activeMedicine;
+    const { interval } = this.state;
+    const medicineId = this.props.activeMedicine.id.toString();
     let final = new Date(`${this.state.startDate}${this.state.time}`);
-    console.log(final)
     PushNotification.localNotificationSchedule({
-      id: this.props.activeMedicine.id.toString(),
+      id: medicineId,
       title: name,
       message: description,
       vibrate: true,
       vibration: 1000,
-      repeatType: this.state.interval,
+      repeatType: interval,
       date: final
     });
+    this.props.addAlarm(medicineId, id, interval, final);
     Alert.alert("Alarm", "Alarm was sucessfully added");
   }
 
@@ -135,24 +146,31 @@ class Profile extends Component {
                 });
               }}
             />
-            <Button
-              backgroundColor={`${backgroundColors.button}`}
-              buttonStyle={{ marginBottom: 15 }}
-              title="Add Alarm"
-              onPress={() => this.createNewAlarm()}
-            />
-
-            <Button
-              backgroundColor={`${backgroundColors.button}`}
-              buttonStyle={{ marginBottom: 15 }}
-              title="Delete Alarm"
-              onPress={() => {
-                PushNotification.cancelLocalNotifications({
-                  id: this.props.activeMedicine.id.toString()
-                });
-                Alert.alert("Alarm", "Alarm was sucessfully removed");
-              }}
-            />
+            {this.props.alarm ? (
+              <Button
+                backgroundColor={`${backgroundColors.button}`}
+                buttonStyle={{ marginBottom: 15 }}
+                title="Delete Alarm"
+                onPress={() => {
+                  console.log(this.props.activeMedicine.id, this.props.user.id);
+                  PushNotification.cancelLocalNotifications({
+                    id: this.props.activeMedicine.id.toString()
+                  });
+                  this.props.deleteAlarm(
+                    this.props.activeMedicine.id,
+                    this.props.user.id
+                  );
+                  Alert.alert("Alarm", "Alarm was sucessfully removed");
+                }}
+              />
+            ) : (
+              <Button
+                backgroundColor={`${backgroundColors.button}`}
+                buttonStyle={{ marginBottom: 15 }}
+                title="Add Alarm"
+                onPress={() => this.createNewAlarm()}
+              />
+            )}
           </Card>
         </ScrollView>
         <PushController />
@@ -163,4 +181,4 @@ class Profile extends Component {
 
 const mapStateToProps = state => state;
 
-export default connect(mapStateToProps)(Profile);
+export default connect(mapStateToProps, { getAlarm, deleteAlarm })(Profile);

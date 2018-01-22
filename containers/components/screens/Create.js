@@ -9,7 +9,10 @@ import {
   TextInput,
   TouchableHighlight,
   ScrollView,
-  Alert
+  Alert,
+  Picker,
+  DatePickerAndroid,
+  TimePickerAndroid
 } from "react-native";
 
 import {
@@ -27,11 +30,19 @@ import {
   FooterTab
 } from "native-base";
 
+import PushController from "./../extras/PushController";
+import PushNotification from "react-native-push-notification";
+
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import styled from "styled-components/native";
 
-import { createMedicine, retrieveRxcuis } from "./../ducks/user";
+import {
+  createMedicine,
+  retrieveRxcuis,
+  addAlarm,
+  createMedicineActive
+} from "./../ducks/user";
 
 import { connect } from "react-redux";
 import Menu from "./../extras/Menu";
@@ -45,7 +56,10 @@ class Create extends Component {
         "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png",
       name: "",
       description: "",
-      rxcuis: ""
+      rxcuis: "",
+      interval: "",
+      startDate: "",
+      time: ""
     };
 
     this.createNewMedicine = this.createNewMedicine.bind(this);
@@ -68,7 +82,7 @@ class Create extends Component {
 
   createNewMedicine() {
     const { id } = this.props.user;
-    const { image, name, description } = this.state;
+    const { image, name, description, interval } = this.state;
     this.props.retrieveRxcuis(name).then(() => {
       if (this.props.rxcuis) {
         this.props
@@ -81,7 +95,42 @@ class Create extends Component {
           })
           .then(res => {
             if (res.value) {
-              return this.props.navigation.navigate("Home");
+              this.props
+                .createMedicineActive(
+                  name,
+                  image,
+                  description,
+                  this.props.rxcuis,
+                  id
+                )
+                .then(response => {
+                  const { startDate, time } = this.state;
+                  const medicineId = this.props.activeMedicine.id.toString();
+                  let final = new Date(`${startDate}${time}`);
+                  if (startDate && time) {
+                    PushNotification.localNotificationSchedule({
+                      id: medicineId,
+                      title: name,
+                      message: description,
+                      vibrate: true,
+                      vibration: 1000,
+                      repeatType: interval,
+                      date: final
+                    });
+                    this.props.addAlarm(medicineId, id, interval, final);
+                    Alert.alert(
+                      "Medicine",
+                      "Medicine was sucessfully added with an Alarm"
+                    );
+                    this.props.navigation.navigate("Home");
+                  } else {
+                    Alert.alert(
+                      "Medicine",
+                      "Medicine was sucessfully added without an Alarm"
+                    );
+                    this.props.navigation.navigate("Home");
+                  }
+                });
             } else {
               Alert.alert("Error", "Something Went Wrong");
             }
@@ -137,9 +186,62 @@ class Create extends Component {
                       ? "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png"
                       : this.state.image
                   }}
-                  style={{ height: 250, width: null, flex: 1 }}
+                  style={{ height: 150, width: null, flex: 1 }}
                 />
               </TouchableHighlight>
+            </CardItem>
+            <Picker
+              selectedValue={this.state.interval}
+              onValueChange={(itemValue, itemIndex) =>
+                this.setState({ interval: itemValue })
+              }
+            >
+              <Picker.Item label="Daily" value="day" />
+              <Picker.Item label="Every Minute" value="minute" />
+              <Picker.Item label="Weekly" value="week" />
+            </Picker>
+            <CardItem>
+              <Left />
+              <Body>
+                <Button
+                  onPress={() => {
+                    const { action, date } = DatePickerAndroid.open({
+                      date: new Date()
+                    }).then(r => {
+                      let month = parseInt(r.month, 10) + 1;
+                      month < 10
+                        ? (month = "0" + month.toString())
+                        : (month = month.toString());
+                      let day = parseInt(r.day, 10);
+                      day < 10
+                        ? (day = "0" + day.toString())
+                        : (day = day.toString());
+                      this.setState({
+                        startDate: `${r.year}-${month}-${day}T`
+                      });
+                      TimePickerAndroid.open({}).then(r2 => {
+                        let hour = parseInt(r2.hour, 10);
+                        hour < 10
+                          ? (hour = "0" + hour.toString())
+                          : (hour = hour.toString());
+                        let minutes = parseInt(r2.minute, 10);
+                        minutes < 10
+                          ? (minutes = "0" + minutes.toString())
+                          : (minutes = minutes.toString());
+                        this.setState({
+                          time: `${hour}:${minutes}:00`
+                        });
+                      });
+                    });
+                  }}
+                >
+                  <Text>Set Date</Text>
+                </Button>
+              </Body>
+              <Right>
+                <Text>{this.state.startDate}</Text>
+                <Text>{this.state.time}</Text>
+              </Right>
             </CardItem>
           </Card>
         </Content>
@@ -150,6 +252,7 @@ class Create extends Component {
             </Button>
           </FooterTab>
         </Footer>
+        <PushController />
       </Container>
     );
   }
@@ -261,6 +364,9 @@ class Create extends Component {
 
 const mapStateToProps = state => state;
 
-export default connect(mapStateToProps, { createMedicine, retrieveRxcuis })(
-  Create
-);
+export default connect(mapStateToProps, {
+  createMedicine,
+  retrieveRxcuis,
+  addAlarm,
+  createMedicineActive
+})(Create);

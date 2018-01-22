@@ -1,0 +1,1 @@
+SELECT * FROM medicine WHERE name = $1 AND image = $2 AND description = $3 AND rxcuis = $4 AND user_id = $5;

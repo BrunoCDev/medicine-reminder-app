@@ -43,7 +43,8 @@ import {
   retrieveMedicine,
   editMedicine,
   deleteMedicine,
-  getColors
+  getColors,
+  resetActiveMedicine
 } from "./../ducks/user";
 
 class Home extends Component {
@@ -56,6 +57,7 @@ class Home extends Component {
     const { id } = this.props.user;
     this.props.retrieveMedicine(id);
     this.props.getColors(id);
+    this.props.resetActiveMedicine();
   }
 
   componentWillReceiveProps(newProps) {}
@@ -146,7 +148,8 @@ export default connect(mapStateToProps, {
   retrieveMedicine,
   editMedicine,
   deleteMedicine,
-  getColors
+  getColors,
+  resetActiveMedicine
 })(Home);
 
 // MENU BUTTONS STYLE

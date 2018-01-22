@@ -29,8 +29,74 @@ const DELETE_MEDICINE = "DELETE_MEDICINE";
 const CREATE_COLORS = "CREATE_COLORS";
 const GET_COLORS = "GET_COLORS";
 const UPDATE_COLORS = "UPDATE_COLORS";
+const ADD_ALARM = "ADD_ALARM";
+const GET_ALARM = "GET_ALARM";
+const DELETE_ALARM = "DELETE_ALARM";
+const RESET_MEDICINE = "RESET_MEDICINE";
+const ACTIVE_MEDICINE = "ACTIVE_MEDICINE";
 
 //Action Creators
+
+export function createMedicineActive(name, image, description, rxcuis, id) {
+  return {
+    type: ACTIVE_MEDICINE,
+    payload: axios
+      .post("http://localhost:3005/api/active/medicine/create", {
+        name,
+        image,
+        description,
+        rxcuis,
+        id
+      })
+      .then(response => response.data)
+      .catch(console.log)
+  };
+}
+
+export function resetActiveMedicine() {
+  return {
+    type: RESET_MEDICINE,
+    payload: {}
+  };
+}
+
+export function getAlarm(medicineId, id) {
+  return {
+    type: GET_ALARM,
+    payload: axios
+      .post("http://localhost:3005/api/alarm/get", { medicineId, id })
+      .then(response => response.data)
+      .catch(console.log)
+  };
+}
+
+export function deleteAlarm(medicineId, id) {
+  return {
+    type: DELETE_ALARM,
+    payload: axios
+      .post("http://localhost:3005/api/alarm/delete", { medicineId, id })
+      .then(response => {
+        console.log(response.data);
+        return response.data;
+      })
+      .catch(console.log)
+  };
+}
+
+export function addAlarm(medicineId, id, interval, final) {
+  return {
+    type: ADD_ALARM,
+    payload: axios
+      .post("http://localhost:3005/api/alarm/add", {
+        medicineId,
+        id,
+        interval,
+        final
+      })
+      .then(response => response.data)
+      .catch(console.log)
+  };
+}
 
 export function createColors({
   firstColor,
@@ -146,13 +212,11 @@ export function createMedicine({ name, image, description, rxcuis, id }) {
 }
 
 export function retrieveRxcuis(name) {
-  console.log("name", name);
   return {
     type: RETRIEVE_RXCUIS,
     payload: axios
       .get(`https://rxnav.nlm.nih.gov/REST/rxcui?name=${name}`)
       .then(res => {
-        console.log("response", res);
         const rxcuis = res.data.idGroup.rxnormId[0];
         if (rxcuis) {
           return rxcuis;
@@ -329,6 +393,77 @@ export default function user(state = initialState, action = {}) {
       });
 
     case `${UPDATE_COLORS}_REJECTED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didError: true
+      });
+
+    // ADD ALARM
+    case `${ADD_ALARM}_PENDING`:
+      return Object.assign({}, state, { isLoading: true });
+
+    case `${ADD_ALARM}_FULFILLED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        alarm: action.payload[0]
+      });
+
+    case `${ADD_ALARM}_REJECTED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didError: true
+      });
+
+    // ADD ALARM
+    case `${GET_ALARM}_PENDING`:
+      return Object.assign({}, state, { isLoading: true });
+
+    case `${GET_ALARM}_FULFILLED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        alarm: action.payload[0]
+      });
+
+    case `${GET_ALARM}_REJECTED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didError: true
+      });
+
+    // DELETE ALARM
+    case `${DELETE_ALARM}_PENDING`:
+      return Object.assign({}, state, { isLoading: true });
+
+    case `${DELETE_ALARM}_FULFILLED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        alarm: action.payload[0]
+      });
+
+    case `${DELETE_ALARM}_REJECTED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didError: true
+      });
+
+    // RESET ACTIVE MEDICINE
+    case RESET_MEDICINE:
+      return Object.assign({}, state, {
+        activeMedicine: action.payload
+      });
+
+    // CREATE ACTIVE MEDICINE
+    case `${ACTIVE_MEDICINE}_PENDING`:
+      return Object.assign({}, state, { isLoading: true });
+
+    case `${ACTIVE_MEDICINE}_FULFILLED`:
+      console.log("PAYLOAD: ", action.payload);
+      return Object.assign({}, state, {
+        isLoading: false,
+        activeMedicine: action.payload[0]
+      });
+
+    case `${ACTIVE_MEDICINE}_REJECTED`:
       return Object.assign({}, state, {
         isLoading: false,
         didError: true
