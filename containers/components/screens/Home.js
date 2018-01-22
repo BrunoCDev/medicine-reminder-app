@@ -73,7 +73,7 @@ class Home extends Component {
       },
       footerButton: {
         fontSize: 25,
-        color: `${backgroundColors.button}`
+        color: `${backgroundColors.textcolor}`
       },
       footer: {
         backgroundColor: `${backgroundColors.card}`

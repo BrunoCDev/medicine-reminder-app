@@ -65,7 +65,7 @@ export const SignedIn = StackNavigator({
   Profile: {
     screen: Profile,
     navigationOptions: {
-      title: "Medicine Editor"
+      headerStyle: { height: 0 }
     }
   },
   Create: {

@@ -68,7 +68,7 @@ class ColorEditor extends Component {
         />
 
         <Text style={{ marginTop: 20, fontSize: 20, marginLeft: 10 }}>
-          Card/Footer Color
+          Card/Footer Background Color
         </Text>
         <TextInput
           style={{ marginLeft: 10 }}

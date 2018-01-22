@@ -457,7 +457,6 @@ export default function user(state = initialState, action = {}) {
       return Object.assign({}, state, { isLoading: true });
 
     case `${ACTIVE_MEDICINE}_FULFILLED`:
-      console.log("PAYLOAD: ", action.payload);
       return Object.assign({}, state, {
         isLoading: false,
         activeMedicine: action.payload[0]

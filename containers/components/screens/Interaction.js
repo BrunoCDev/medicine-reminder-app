@@ -38,9 +38,7 @@ class Interaction extends Component {
           axios
             .get(`${this.state.int}${this.state.str}`)
             .then(res2 => {
-              if (
-                res2.data.fullInteractionTypeGroup[0].fullInteractionType.length
-              ) {
+              if (res2.data.fullInteractionTypeGroup) {
                 Alert.alert(
                   "Bad Reactions Found",
                   `You probably shouldn't take these medicines together`
@@ -55,7 +53,7 @@ class Interaction extends Component {
                 );
               } else {
                 Alert.alert(
-                  "No Bad Reactions Foud",
+                  "No Bad Reactions Found",
                   `We didn't find any bad reactions between these medicines`
                 );
               }

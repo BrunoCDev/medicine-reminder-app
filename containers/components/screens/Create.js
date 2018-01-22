@@ -66,6 +66,9 @@ class Create extends Component {
     this.getImage = this.getImage.bind(this);
   }
 
+  componentDidMount() {
+    PushNotification.cancelAllLocalNotifications();
+  }
   getImage = () => {
     ImagePicker.showImagePicker({ cameraType: "back" }, response => {
       let source = response.uri;
@@ -107,11 +110,13 @@ class Create extends Component {
                   const { startDate, time } = this.state;
                   const medicineId = this.props.activeMedicine.id.toString();
                   let final = new Date(`${startDate}${time}`);
+                  console.log(final);
                   if (startDate && time) {
                     PushNotification.localNotificationSchedule({
                       id: medicineId,
                       title: name,
                       message: description,
+                      largeIcon: this.state.image,
                       vibrate: true,
                       vibration: 1000,
                       repeatType: interval,
@@ -256,110 +261,6 @@ class Create extends Component {
       </Container>
     );
   }
-}
-{
-  /* <View style={{ flex: 1, backgroundColor: "#e2e2e2" }}>
-        <AnimatedLinearGradient
-          customColors={[
-            `${backgroundColors.first}`,
-            `${backgroundColors.second}`,
-            `${backgroundColors.third}`
-          ]}
-        >
-          <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
-            <Card
-              containerStyle={{
-                backgroundColor: `${backgroundColors.card}`
-              }}
-            >
-              <Image
-                source={{ uri: this.state.image }}
-                style={{ height: 300 }}
-              />
-
-              <TextInput
-                onChangeText={e => this.setState({ name: e })}
-                placeholder="Medicine Name"
-                placeholderTextColor={`${backgroundColors.textcolor}`}
-                style={{
-                  marginTop: 20,
-                  color: `${backgroundColors.textcolor}`
-                }}
-              />
-
-              <TextInput
-                onChangeText={e => this.setState({ description: e })}
-                placeholder="Description"
-                placeholderTextColor={`${backgroundColors.textcolor}`}
-                style={{
-                  marginTop: 20,
-                  color: `${backgroundColors.textcolor}`
-                }}
-              />
-              <View style={{ alignItems: "center" }}>
-                <Button
-                  small
-                  title={"Get Image"}
-                  buttonStyle={{
-                    width: 200,
-                    backgroundColor: `${backgroundColors.button}`,
-                    marginTop: 20
-                  }}
-                  textStyle={{
-                    fontSize: 15,
-                    letterSpacing: 10,
-                    color: `${backgroundColors.textcolor}`
-                  }}
-                  onPress={this.getImage}
-                />
-                <Button
-                  small
-                  title={"Cancel"}
-                  buttonStyle={{
-                    width: 200,
-                    backgroundColor: `${backgroundColors.button}`,
-                    marginTop: 20,
-                    alignItems: "center"
-                  }}
-                  textStyle={{
-                    fontSize: 15,
-                    letterSpacing: 10,
-                    color: `${backgroundColors.textcolor}`
-                  }}
-                  onPress={() => {
-                    this.setState({
-                      image:
-                        "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png",
-                      name: "",
-                      description: "",
-                      rxcius: ""
-                    });
-                    navigation.navigate("Home");
-                  }}
-                />
-
-                <Button
-                  small
-                  title={"Save"}
-                  buttonStyle={{
-                    width: 200,
-                    backgroundColor: `${backgroundColors.button}`,
-                    marginTop: 20
-                  }}
-                  textStyle={{
-                    fontSize: 15,
-                    letterSpacing: 10,
-                    color: `${backgroundColors.textcolor}`
-                  }}
-                  onPress={() => {
-                    this.createNewMedicine();
-                  }}
-                />
-              </View>
-            </Card>
-          </ScrollView>
-        </AnimatedLinearGradient>
-      </View> */
 }
 
 const mapStateToProps = state => state;
