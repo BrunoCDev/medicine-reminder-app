@@ -85,6 +85,20 @@ class ColorEditor extends Component {
           onChangeText={e => this.setState({ textColor: e.toLowerCase() })}
         />
         <View style={{ marginTop: 20 }}>
+          {/* <Button
+            title="Reset"
+            color={this.props.backgroundColors.button}
+            onPress={() =>
+              this.setState({
+                firstColor: "rgb(33,33,33)",
+                secondColor: "rgb(18,18,18)",
+                thirdColor: "rgb(83,83,83)",
+                buttonColor: "grey",
+                cardColor: "#535353",
+                textColor: "white"
+              })
+            }
+          /> */}
           {this.props.backgroundColors.id ? (
             <Button
               title="Update"

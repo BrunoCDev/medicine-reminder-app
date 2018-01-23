@@ -1,1 +1,1 @@
-SELECT * FROM medicine_users WHERE email = $1 AND password = $2;
+SELECT * FROM medicine_users WHERE email = $1;

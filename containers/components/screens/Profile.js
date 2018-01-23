@@ -27,7 +27,7 @@ class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      interval: ""
+      interval: "day"
     };
   }
 
@@ -51,7 +51,14 @@ class Profile extends Component {
       repeatType: interval,
       date: final
     });
-    this.props.addAlarm(medicineId, id, interval, final);
+    this.props.addAlarm(
+      medicineId,
+      id,
+      interval,
+      final,
+      this.state.displayDate,
+      this.state.displayTime
+    );
     Alert.alert("Alarm", "Alarm was sucessfully added");
   }
 
@@ -92,7 +99,45 @@ class Profile extends Component {
           >
             {activeMedicine.description}
           </Text>
-          {this.props.alarm ? null : (
+          {this.props.alarm ? (
+            <View>
+              <Text
+                style={{
+                  fontSize: 15,
+                  textAlign: "center",
+                  color: `${backgroundColors.textcolor}`
+                }}
+              >
+                Start Date: {this.props.alarm.display_date} Hour:{" "}
+                {this.props.alarm.display_time}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 15,
+                  textAlign: "center",
+                  color: `${backgroundColors.textcolor}`
+                }}
+              >
+                Interval: {this.props.alarm.interval}
+              </Text>
+              <Button
+                color={`${backgroundColors.textcolor}`}
+                backgroundColor={`${backgroundColors.button}`}
+                buttonStyle={{ marginBottom: 10, marginTop: 10 }}
+                title="Delete Alarm"
+                onPress={() => {
+                  PushNotification.cancelLocalNotifications({
+                    id: this.props.activeMedicine.id.toString()
+                  });
+                  this.props.deleteAlarm(
+                    this.props.activeMedicine.id,
+                    this.props.user.id
+                  );
+                  Alert.alert("Alarm", "Alarm was sucessfully removed");
+                }}
+              />
+            </View>
+          ) : (
             <View>
               <Picker
                 style={{
@@ -107,69 +152,63 @@ class Profile extends Component {
                 <Picker.Item label="Daily" value="day" />
                 <Picker.Item label="Weekly" value="week" />
               </Picker>
-              <Button
-                backgroundColor={`${backgroundColors.button}`}
-                title="Set Date/Hour"
-                buttonStyle={{ marginBottom: 15 }}
-                onPress={() => {
-                  const { action, date } = DatePickerAndroid.open({
-                    date: new Date()
-                  }).then(r => {
-                    let month = parseInt(r.month, 10) + 1;
-                    month < 10
-                      ? (month = "0" + month.toString())
-                      : (month = month.toString());
-                    let day = parseInt(r.day, 10);
-                    day < 10
-                      ? (day = "0" + day.toString())
-                      : (day = day.toString());
-                    this.setState({
-                      startDate: `${r.year}-${month}-${day}T`
-                    });
-                    TimePickerAndroid.open({}).then(r2 => {
-                      let hour = parseInt(r2.hour, 10);
-                      hour < 10
-                        ? (hour = "0" + hour.toString())
-                        : (hour = hour.toString());
-                      let minutes = parseInt(r2.minute, 10);
-                      minutes < 10
-                        ? (minutes = "0" + minutes.toString())
-                        : (minutes = minutes.toString());
+              <View
+                style={{
+                  alignItems: "flex-start",
+                  flexDirection: "row"
+                }}
+              >
+                <Button
+                  color={`${backgroundColors.textcolor}`}
+                  backgroundColor={`${backgroundColors.button}`}
+                  title="Set Date/Hour"
+                  buttonStyle={{ marginBottom: 15, width: 125 }}
+                  onPress={() => {
+                    const { action, date } = DatePickerAndroid.open({
+                      date: new Date()
+                    }).then(r => {
+                      let month = parseInt(r.month, 10) + 1;
+                      month < 10
+                        ? (month = "0" + month.toString())
+                        : (month = month.toString());
+                      let day = parseInt(r.day, 10);
+                      day < 10
+                        ? (day = "0" + day.toString())
+                        : (day = day.toString());
                       this.setState({
-                        time: `${hour}:${minutes}:00`
+                        displayDate: `${r.year}-${month}-${day}`,
+                        startDate: `${r.year}-${month}-${day}T`
+                      });
+                      TimePickerAndroid.open({}).then(r2 => {
+                        let hour = parseInt(r2.hour, 10);
+                        hour < 10
+                          ? (hour = "0" + hour.toString())
+                          : (hour = hour.toString());
+                        let minutes = parseInt(r2.minute, 10);
+                        minutes < 10
+                          ? (minutes = "0" + minutes.toString())
+                          : (minutes = minutes.toString());
+                        this.setState({
+                          displayTime: `${hour}:${minutes}`,
+                          time: `${hour}:${minutes}:00`
+                        });
                       });
                     });
-                  });
-                }}
-              />
+                  }}
+                />
+                <Button
+                  color={`${backgroundColors.textcolor}`}
+                  backgroundColor={`${backgroundColors.button}`}
+                  buttonStyle={{ marginBottom: 10, width: 125 }}
+                  title="Add Alarm"
+                  onPress={() => this.createNewAlarm()}
+                />
+              </View>
             </View>
-          )}
-          {this.props.alarm ? (
-            <Button
-              backgroundColor={`${backgroundColors.button}`}
-              buttonStyle={{ marginBottom: 10 }}
-              title="Delete Alarm"
-              onPress={() => {
-                PushNotification.cancelLocalNotifications({
-                  id: this.props.activeMedicine.id.toString()
-                });
-                this.props.deleteAlarm(
-                  this.props.activeMedicine.id,
-                  this.props.user.id
-                );
-                Alert.alert("Alarm", "Alarm was sucessfully removed");
-              }}
-            />
-          ) : (
-            <Button
-              backgroundColor={`${backgroundColors.button}`}
-              buttonStyle={{ marginBottom: 10 }}
-              title="Add Alarm"
-              onPress={() => this.createNewAlarm()}
-            />
           )}
           <Button
             small
+            color={`${backgroundColors.textcolor}`}
             backgroundColor={`${backgroundColors.button}`}
             title={"Delete"}
             textStyle={{

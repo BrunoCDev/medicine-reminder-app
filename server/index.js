@@ -50,6 +50,7 @@ app.post("/api/alarm/add", uc.addAlarm);
 app.post("/api/alarm/get", uc.getAlarm);
 app.post("/api/alarm/delete", uc.deleteAlarm);
 app.post("/api/active/medicine/create", uc.createActiveMedicine);
+app.post("/api/colors/delete", uc.deleteColors);
 
 // APP LISTEN
 app.listen(PORT, () => {

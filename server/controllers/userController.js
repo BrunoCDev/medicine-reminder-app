@@ -1,19 +1,32 @@
+const bcrypt = require("bcryptjs");
+const { SALT } = require("./../config");
+
 const getUser = (req, res, next) => {
   const { email, password } = req.body;
   const db = req.app.get("db");
   db
-    .getUser([email, password])
-    .then(response => res.json(response[0]))
+    .getUser(email)
+    .then(response => {
+      bcrypt.compare(password, response[0].password, function(err, confirm) {
+        if (confirm == true) {
+          res.json(response[0]);
+        } else {
+          return null;
+        }
+      });
+    })
     .catch(console.log);
 };
 
 const createUser = (req, res, next) => {
   const db = req.app.get("db");
   const { email, password } = req.body;
-  db
-    .createUser([email, password])
-    .then(response => res.json(response[0]))
-    .catch(console.log);
+  bcrypt.hash(password, SALT, function(err, hash) {
+    db
+      .createUser([email, hash])
+      .then(response => res.json(response[0]))
+      .catch(console.log);
+  });
 };
 
 const getMedicine = (req, res, next) => {
@@ -113,9 +126,16 @@ const updateColors = (req, res, next) => {
 
 const addAlarm = (req, res, next) => {
   const db = req.app.get("db");
-  const { medicineId, id, interval, final } = req.body;
+  const {
+    medicineId,
+    id,
+    interval,
+    final,
+    displayDate,
+    displayTime
+  } = req.body;
   db
-    .addAlarm([medicineId, id, interval, final])
+    .addAlarm([medicineId, id, interval, final, displayDate, displayTime])
     .then(response => res.json(response))
     .catch(console.log);
 };
@@ -147,6 +167,15 @@ const createActiveMedicine = (req, res, next) => {
     .catch(console.log);
 };
 
+const deleteColors = (req, res, next) => {
+  const db = req.app.get("db");
+  const { id } = req.body;
+  db
+    .deleteColors(id)
+    .then(response => res.json(response))
+    .catch(console.log);
+};
+
 module.exports = {
   getUser,
   createUser,
@@ -160,5 +189,6 @@ module.exports = {
   addAlarm,
   getAlarm,
   deleteAlarm,
-  createActiveMedicine
+  createActiveMedicine,
+  deleteColors
 };

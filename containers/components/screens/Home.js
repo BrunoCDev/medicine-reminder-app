@@ -11,7 +11,8 @@ import {
   Image,
   Alert,
   StyleSheet,
-  Animated
+  Animated,
+  TouchableWithoutFeedback
 } from "react-native";
 
 import {
@@ -44,7 +45,8 @@ import {
   editMedicine,
   deleteMedicine,
   getColors,
-  resetActiveMedicine
+  resetActiveMedicine,
+  deleteColors
 } from "./../ducks/user";
 
 class Home extends Component {
@@ -126,7 +128,14 @@ class Home extends Component {
         </Content>
         <Footer>
           <FooterTab style={styles.footer}>
-            <Button onPress={() => navigation.navigate("Colors")}>
+            <Button
+              onPress={() => navigation.navigate("Colors")}
+              onLongPress={() => {
+                this.props.deleteColors(this.props.user.id);
+                Alert.alert("Colors", "Colors sucessfully removed");
+              }}
+              delayLongPress={3000}
+            >
               <Icon name="format-color-fill" style={styles.footerButton} />
             </Button>
             <Button onPress={() => this.props.navigation.navigate("Create")}>
@@ -149,7 +158,8 @@ export default connect(mapStateToProps, {
   editMedicine,
   deleteMedicine,
   getColors,
-  resetActiveMedicine
+  resetActiveMedicine,
+  deleteColors
 })(Home);
 
 // MENU BUTTONS STYLE

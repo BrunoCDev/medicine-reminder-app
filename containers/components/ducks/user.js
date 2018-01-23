@@ -34,8 +34,19 @@ const GET_ALARM = "GET_ALARM";
 const DELETE_ALARM = "DELETE_ALARM";
 const RESET_MEDICINE = "RESET_MEDICINE";
 const ACTIVE_MEDICINE = "ACTIVE_MEDICINE";
+const DELETE_COLORS = "DELETE_COLORS";
 
 //Action Creators
+
+export function deleteColors(id) {
+  return {
+    type: DELETE_COLORS,
+    payload: axios
+      .post("http://localhost:3005/api/colors/delete", { id })
+      .then(response => response.data)
+      .catch(console.log)
+  };
+}
 
 export function createMedicineActive(name, image, description, rxcuis, id) {
   return {
@@ -83,7 +94,14 @@ export function deleteAlarm(medicineId, id) {
   };
 }
 
-export function addAlarm(medicineId, id, interval, final) {
+export function addAlarm(
+  medicineId,
+  id,
+  interval,
+  final,
+  displayDate,
+  displayTime
+) {
   return {
     type: ADD_ALARM,
     payload: axios
@@ -91,7 +109,9 @@ export function addAlarm(medicineId, id, interval, final) {
         medicineId,
         id,
         interval,
-        final
+        final,
+        displayDate,
+        displayTime
       })
       .then(response => response.data)
       .catch(console.log)
@@ -463,6 +483,29 @@ export default function user(state = initialState, action = {}) {
       });
 
     case `${ACTIVE_MEDICINE}_REJECTED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didError: true
+      });
+
+    // DELETE  COLORS
+    case `${DELETE_COLORS}_PENDING`:
+      return Object.assign({}, state, { isLoading: true });
+
+    case `${DELETE_COLORS}_FULFILLED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        backgroundColors: {
+          first: "rgb(33,33,33)",
+          second: "rgb(18,18,18)",
+          third: "rgb(83,83,83)",
+          button: "grey",
+          card: "#535353",
+          textcolor: "white"
+        }
+      });
+
+    case `${DELETE_COLORS}_REJECTED`:
       return Object.assign({}, state, {
         isLoading: false,
         didError: true
