@@ -29,6 +29,7 @@
     "express-session": "1.15.6",
     "fbjs": "0.8.16",
     "massive": "4.6.2",
+    "moment": "2.20.1",
     "native-base": "2.3.7",
     "passport": "0.4.0",
     "rc-animate": "2.4.4",

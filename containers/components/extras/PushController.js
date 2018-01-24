@@ -1,12 +1,15 @@
 import React, { Component } from "react";
 import PushNotification from "react-native-push-notification";
+import { connect } from "react-redux";
+import { retrieveMedicine, getUserById } from "../ducks/user";
 
-export default class PushController extends Component {
+class PushController extends Component {
   componentDidMount() {
     PushNotification.configure({
-      onNotification: function(notification) {
-        console.log("NOTIFICATION", notification);
-      }
+      onNotification: notification => {
+        this.props.navigate("Profile");
+      },
+      requestPermissions: true
     });
   }
 
@@ -14,3 +17,9 @@ export default class PushController extends Component {
     return null;
   }
 }
+
+const mapStateToProps = state => state;
+
+export default connect(mapStateToProps, { retrieveMedicine, getUserById })(
+  PushController
+);

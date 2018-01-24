@@ -41,7 +41,7 @@ class Interaction extends Component {
               if (res2.data.fullInteractionTypeGroup) {
                 Alert.alert(
                   "Bad Reactions Found",
-                  `You probably shouldn't take these medicines together`
+                  `These medications might have some side effects when taken together!`
                 );
                 res2.data.fullInteractionTypeGroup[0].fullInteractionType.map(
                   (el, index) => {

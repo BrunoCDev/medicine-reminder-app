@@ -11,8 +11,9 @@ import {
   Image,
   Alert,
   StyleSheet,
+  TouchableWithoutFeedback,
   Animated,
-  TouchableWithoutFeedback
+  Easing
 } from "react-native";
 
 import {
@@ -52,12 +53,26 @@ import {
 class Home extends Component {
   constructor(props) {
     super(props);
+
+    this.bounceValue = new Animated.Value(0);
+
     this.state = {};
   }
 
   componentDidMount() {
     const { id } = this.props.user;
-    this.props.retrieveMedicine(id);
+    this.props.retrieveMedicine(id).then(() => {
+      if (!this.props.medicine.length) {
+        setTimeout(
+          () =>
+            Alert.alert(
+              "Instructions",
+              `You can Click the "+" sign below to get started!`
+            ),
+          2000
+        );
+      }
+    });
     this.props.getColors(id);
     this.props.resetActiveMedicine();
   }

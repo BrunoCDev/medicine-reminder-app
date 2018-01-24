@@ -35,8 +35,19 @@ const DELETE_ALARM = "DELETE_ALARM";
 const RESET_MEDICINE = "RESET_MEDICINE";
 const ACTIVE_MEDICINE = "ACTIVE_MEDICINE";
 const DELETE_COLORS = "DELETE_COLORS";
+const GET_USER_BY_ID = "GET_USER_BY_ID";
 
 //Action Creators
+
+export function getUserById(id) {
+  return {
+    type: GET_USER_BY_ID,
+    payload: axios
+      .post("http://localhost:3005/api/user/get", { id })
+      .then(response => response.data)
+      .catch(console.log)
+  };
+}
 
 export function deleteColors(id) {
   return {
@@ -506,6 +517,22 @@ export default function user(state = initialState, action = {}) {
       });
 
     case `${DELETE_COLORS}_REJECTED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didError: true
+      });
+
+    // GET USER BY ID
+    case `${GET_USER_BY_ID}_PENDING`:
+      return Object.assign({}, state, { isLoading: true });
+
+    case `${GET_USER_BY_ID}_FULFILLED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        user: action.payload
+      });
+
+    case `${GET_USER_BY_ID}_REJECTED`:
       return Object.assign({}, state, {
         isLoading: false,
         didError: true

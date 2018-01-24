@@ -57,7 +57,7 @@ class Create extends Component {
       name: "",
       description: "",
       rxcuis: "",
-      interval: "",
+      interval: "day",
       startDate: "",
       time: ""
     };
@@ -104,9 +104,9 @@ class Create extends Component {
                   id
                 )
                 .then(response => {
-                  const { startDate, time } = this.state;
+                  const { startDate, time, interval } = this.state;
                   const medicineId = this.props.activeMedicine.id.toString();
-                  let final = new Date(`${startDate}${time}`);
+                  let final = new Date(`${startDate}T${time}`);
                   console.log(final);
                   if (startDate && time) {
                     PushNotification.localNotificationSchedule({
@@ -119,7 +119,14 @@ class Create extends Component {
                       repeatType: interval,
                       date: final
                     });
-                    this.props.addAlarm(medicineId, id, interval, final);
+                    this.props.addAlarm(
+                      medicineId,
+                      id,
+                      interval,
+                      final,
+                      this.state.startDate,
+                      this.state.time
+                    );
                     Alert.alert(
                       "Medicine",
                       "Medicine was sucessfully added with an Alarm"
@@ -178,8 +185,7 @@ class Create extends Component {
                 style={{
                   height: 250,
                   width: null,
-                  flex: 1,
-                  color: "transparent"
+                  flex: 1
                 }}
               >
                 <Image
@@ -199,7 +205,6 @@ class Create extends Component {
               }
             >
               <Picker.Item label="Daily" value="day" />
-              <Picker.Item label="Every Minute" value="minute" />
               <Picker.Item label="Weekly" value="week" />
             </Picker>
             <CardItem>
@@ -222,7 +227,7 @@ class Create extends Component {
                         ? (day = "0" + day.toString())
                         : (day = day.toString());
                       this.setState({
-                        startDate: `${r.year}-${month}-${day}T`
+                        startDate: `${r.year}-${month}-${day}`
                       });
                       TimePickerAndroid.open({}).then(r2 => {
                         let hour = parseInt(r2.hour, 10);

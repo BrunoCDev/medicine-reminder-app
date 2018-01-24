@@ -176,6 +176,15 @@ const deleteColors = (req, res, next) => {
     .catch(console.log);
 };
 
+const getUserById = (req, res, next) => {
+  const db = req.app.get("db");
+  const { id } = req.body;
+  db
+    .getUserById(id)
+    .then(response => res.json(response[0]))
+    .catch(console.log);
+};
+
 module.exports = {
   getUser,
   createUser,
@@ -190,5 +199,6 @@ module.exports = {
   getAlarm,
   deleteAlarm,
   createActiveMedicine,
-  deleteColors
+  deleteColors,
+  getUserById
 };

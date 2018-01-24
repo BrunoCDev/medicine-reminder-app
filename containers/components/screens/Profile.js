@@ -23,9 +23,12 @@ import {
   addAlarm
 } from "./../ducks/user";
 
+import moment from "moment";
+
 class Profile extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       interval: "day"
     };
@@ -40,7 +43,7 @@ class Profile extends Component {
     const { description, name } = this.props.activeMedicine;
     const { interval } = this.state;
     const medicineId = this.props.activeMedicine.id.toString();
-    let final = new Date(`${this.state.startDate}${this.state.time}`);
+    let final = new Date(`${this.state.startDate}T${this.state.time}`);
     console.log(final);
     PushNotification.localNotificationSchedule({
       id: medicineId,
@@ -55,7 +58,7 @@ class Profile extends Component {
       medicineId,
       id,
       interval,
-      final,
+      `${this.state.startDate} ${this.state.time}`,
       this.state.displayDate,
       this.state.displayTime
     );
@@ -177,7 +180,7 @@ class Profile extends Component {
                         : (day = day.toString());
                       this.setState({
                         displayDate: `${r.year}-${month}-${day}`,
-                        startDate: `${r.year}-${month}-${day}T`
+                        startDate: `${r.year}-${month}-${day}`
                       });
                       TimePickerAndroid.open({}).then(r2 => {
                         let hour = parseInt(r2.hour, 10);
@@ -230,7 +233,7 @@ class Profile extends Component {
             }}
           />
         </Card>
-        <PushController />
+        <PushController navigate={this.props.navigation.navigate} />
       </View>
     );
   }
