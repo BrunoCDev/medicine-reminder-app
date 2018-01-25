@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { View, Alert } from "react-native";
+import { View, Alert, AsyncStorage } from "react-native";
 import { Card, Button, FormLabel, FormInput } from "react-native-elements";
 import { onSignIn } from "./../auth";
-import { retrieveUser } from "./../ducks/user";
+import { retrieveUser, loadingTrue } from "./../ducks/user";
 
 import { connect } from "react-redux";
 
@@ -39,7 +39,13 @@ class Login extends Component {
             onPress={() =>
               retrieveUser(email, password).then(res => {
                 if (this.props.user.id) {
-                  navigation.navigate("SignedIn");
+                  AsyncStorage.setItem(
+                    "user",
+                    this.props.user.id.toString()
+                  ).then(() => {
+                    this.props.loadingTrue();
+                    navigation.navigate("Home");
+                  });
                 } else {
                   Alert.alert(
                     "Login Not Successful",
@@ -57,4 +63,4 @@ class Login extends Component {
 
 const mapStateToProps = state => state;
 
-export default connect(mapStateToProps, { retrieveUser })(Login);
+export default connect(mapStateToProps, { retrieveUser, loadingTrue })(Login);

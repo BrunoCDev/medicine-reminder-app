@@ -1,5 +1,4 @@
 const bcrypt = require("bcryptjs");
-const { SALT } = require("./../config");
 
 const getUser = (req, res, next) => {
   const { email, password } = req.body;
@@ -21,7 +20,8 @@ const getUser = (req, res, next) => {
 const createUser = (req, res, next) => {
   const db = req.app.get("db");
   const { email, password } = req.body;
-  bcrypt.hash(password, SALT, function(err, hash) {
+  bcrypt.hash(password, parseInt(process.env.SALT, 10), function(err, hash) {
+    console.log(email, hash);
     db
       .createUser([email, hash])
       .then(response => res.json(response[0]))

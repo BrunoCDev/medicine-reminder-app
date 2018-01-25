@@ -17,13 +17,15 @@ export const createRootNavigator = (signedIn = false) => {
         screen: SignedIn,
         navigationOptions: {
           gesturesEnabled: false
-        }
+        },
+        initialRouteName: signedIn ? "Home" : "SignUp"
       },
       SignedOut: {
         screen: SignedOut,
         navigationOptions: {
           gesturesEnabled: false
-        }
+        },
+        initialRouteName: !signedIn ? "SignUp" : "Home"
       }
     },
     {

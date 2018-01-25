@@ -13,7 +13,9 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Animated,
-  Easing
+  Easing,
+  AsyncStorage,
+  ActivityIndicator
 } from "react-native";
 
 import {
@@ -29,6 +31,8 @@ import {
   Footer,
   FooterTab
 } from "native-base";
+
+import { Loading } from "./Loading";
 
 import { Card } from "react-native-elements";
 // import Button from "antd-mobile/lib/button";
@@ -47,7 +51,10 @@ import {
   deleteMedicine,
   getColors,
   resetActiveMedicine,
-  deleteColors
+  deleteColors,
+  getUserById,
+  loadingFalse,
+  loadingTrue
 } from "./../ducks/user";
 
 class Home extends Component {
@@ -60,21 +67,33 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    const { id } = this.props.user;
-    this.props.retrieveMedicine(id).then(() => {
-      if (!this.props.medicine.length) {
-        setTimeout(
-          () =>
-            Alert.alert(
-              "Instructions",
-              `You can Click the "+" sign below to get started!`
-            ),
-          2000
-        );
+    this.props.loadingTrue();
+    AsyncStorage.getItem("user").then(result => {
+      if (result) {
+        this.props.getUserById(result).then(res => {
+          if (this.props.user) {
+            const { id } = this.props.user;
+            this.props.retrieveMedicine(id).then(() => {
+              this.props.loadingFalse();
+              if (!this.props.medicine.length) {
+                setTimeout(
+                  () =>
+                    Alert.alert(
+                      "Instructions",
+                      `You can Click the "+" sign below to get started!`
+                    ),
+                  1000
+                );
+              }
+            });
+          }
+        });
+      } else {
+        this.props.navigation.navigate("SignUp");
       }
     });
-    this.props.getColors(id);
-    this.props.resetActiveMedicine();
+    // this.props.getColors(id);
+    // this.props.resetActiveMedicine();
   }
 
   componentWillReceiveProps(newProps) {}
@@ -106,62 +125,87 @@ class Home extends Component {
     });
 
     return (
-      <Container>
-        <AnimatedLinearGradient
-          customColors={[
-            `${backgroundColors.first}`,
-            `${backgroundColors.second}`,
-            `${backgroundColors.third}`
-          ]}
-          speed={5000}
-        />
-
-        <Content>
-          <ScrollView>
-            <List
-              dataArray={medicine}
-              renderRow={item => (
-                <ListItem
-                  style={{ height: 100 }}
-                  onPress={() => {
-                    this.props
-                      .editMedicine(item.id)
-                      .then(() => navigation.navigate("Profile"));
-                  }}
-                >
-                  <Thumbnail square size={120} source={{ uri: item.image }} />
-                  <Body>
-                    <Text style={styles.title}>{item.name}</Text>
-                    <Text note style={styles.description}>
-                      {item.description}
-                    </Text>
-                  </Body>
-                </ListItem>
-              )}
+      <View style={{ flex: 1 }}>
+        {this.props.loading ? (
+          <Loading />
+        ) : (
+          <Container>
+            <AnimatedLinearGradient
+              customColors={[
+                `${backgroundColors.first}`,
+                `${backgroundColors.second}`,
+                `${backgroundColors.third}`
+              ]}
+              speed={5000}
             />
-          </ScrollView>
-        </Content>
-        <Footer>
-          <FooterTab style={styles.footer}>
-            <Button
-              onPress={() => navigation.navigate("Colors")}
-              onLongPress={() => {
-                this.props.deleteColors(this.props.user.id);
-                Alert.alert("Colors", "Colors sucessfully removed");
-              }}
-              delayLongPress={3000}
-            >
-              <Icon name="format-color-fill" style={styles.footerButton} />
-            </Button>
-            <Button onPress={() => this.props.navigation.navigate("Create")}>
-              <Icon name="plus-box" style={styles.footerButton} />
-            </Button>
-            <Button onPress={() => navigation.navigate("Interaction")}>
-              <Icon name="link-variant" style={styles.footerButton} />
-            </Button>
-          </FooterTab>
-        </Footer>
-      </Container>
+
+            <Content>
+              <ScrollView>
+                <List
+                  dataArray={medicine}
+                  renderRow={item => (
+                    <ListItem
+                      style={{ height: 100 }}
+                      onPress={() => {
+                        this.props
+                          .editMedicine(item.id)
+                          .then(() => navigation.navigate("Profile"));
+                      }}
+                    >
+                      <Thumbnail
+                        square
+                        size={120}
+                        source={{ uri: item.image }}
+                      />
+                      <Body>
+                        <Text style={styles.title}>{item.name}</Text>
+                        <Text note style={styles.description}>
+                          {item.description}
+                        </Text>
+                      </Body>
+                    </ListItem>
+                  )}
+                />
+              </ScrollView>
+            </Content>
+            <Footer>
+              <FooterTab style={styles.footer}>
+                <Button
+                  onPress={() => navigation.navigate("Colors")}
+                  onLongPress={() => {
+                    Alert.alert("Colors", "Colors sucessfully removed");
+                    this.props.loadingTrue();
+                    this.props
+                      .deleteColors(this.props.user.id)
+                      .then(() => this.props.loadingFalse());
+                  }}
+                  delayLongPress={3000}
+                >
+                  <Icon name="format-color-fill" style={styles.footerButton} />
+                </Button>
+                <Button
+                  onPress={() => this.props.navigation.navigate("Create")}
+                >
+                  <Icon name="plus-box" style={styles.footerButton} />
+                </Button>
+                <Button
+                  onPress={() => navigation.navigate("Interaction")}
+                  onLongPress={() => {
+                    Alert.alert("Logout", "Logout Sucessful");
+                    this.props.loadingTrue();
+                    AsyncStorage.setItem("user", "").then(() => {
+                      this.props.navigation.navigate("SignUp");
+                    });
+                  }}
+                  delayLongPress={3000}
+                >
+                  <Icon name="link-variant" style={styles.footerButton} />
+                </Button>
+              </FooterTab>
+            </Footer>
+          </Container>
+        )}
+      </View>
     );
   }
 }
@@ -174,7 +218,10 @@ export default connect(mapStateToProps, {
   deleteMedicine,
   getColors,
   resetActiveMedicine,
-  deleteColors
+  deleteColors,
+  getUserById,
+  loadingFalse,
+  loadingTrue
 })(Home);
 
 // MENU BUTTONS STYLE

@@ -5,7 +5,12 @@ import axios from "axios";
 
 import { connect } from "react-redux";
 
-import { createColors, getColors, updateColors } from "./../ducks/user";
+import {
+  createColors,
+  getColors,
+  updateColors,
+  loadingTrue
+} from "./../ducks/user";
 
 class ColorEditor extends Component {
   constructor(props) {
@@ -123,6 +128,7 @@ class ColorEditor extends Component {
               color={this.props.backgroundColors.button}
               onPress={() => {
                 Alert.alert("Color Editor", "Theme was sucessfully saved!");
+                this.props.loadingTrue();
                 const { id } = this.props.user;
                 this.props.createColors({
                   firstColor: this.state.firstColor,
@@ -148,5 +154,6 @@ const mapStateToProps = state => state;
 export default connect(mapStateToProps, {
   createColors,
   getColors,
-  updateColors
+  updateColors,
+  loadingTrue
 })(ColorEditor);

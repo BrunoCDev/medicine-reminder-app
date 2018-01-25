@@ -1,8 +1,10 @@
 import axios from "axios";
+import { API_HOST } from "react-native-dotenv";
 
 //Initial State
 const initialState = {
   user: {},
+  loading: true,
   medicine: [],
   alarm: {},
   rxcuis: "",
@@ -36,14 +38,41 @@ const RESET_MEDICINE = "RESET_MEDICINE";
 const ACTIVE_MEDICINE = "ACTIVE_MEDICINE";
 const DELETE_COLORS = "DELETE_COLORS";
 const GET_USER_BY_ID = "GET_USER_BY_ID";
+const CREATE_USER = "CREATE_USER";
+const LOADING_FALSE = "LOADING_FALSE";
+const LOADING_TRUE = "LOADING_TRUE";
 
 //Action Creators
+
+export function loadingTrue() {
+  return {
+    type: LOADING_TRUE,
+    payload: true
+  };
+}
+
+export function loadingFalse() {
+  return {
+    type: LOADING_FALSE,
+    payload: false
+  };
+}
+
+export function createUser(email, password) {
+  return {
+    type: CREATE_USER,
+    payload: axios
+      .post(`${API_HOST}/api/create`, { email, password })
+      .then(response => response.data)
+      .catch(console.log)
+  };
+}
 
 export function getUserById(id) {
   return {
     type: GET_USER_BY_ID,
     payload: axios
-      .post("http://localhost:3005/api/user/get", { id })
+      .post(`${API_HOST}/api/user/get`, { id })
       .then(response => response.data)
       .catch(console.log)
   };
@@ -53,7 +82,7 @@ export function deleteColors(id) {
   return {
     type: DELETE_COLORS,
     payload: axios
-      .post("http://localhost:3005/api/colors/delete", { id })
+      .post(`${API_HOST}/api/colors/delete`, { id })
       .then(response => response.data)
       .catch(console.log)
   };
@@ -63,7 +92,7 @@ export function createMedicineActive(name, image, description, rxcuis, id) {
   return {
     type: ACTIVE_MEDICINE,
     payload: axios
-      .post("http://localhost:3005/api/active/medicine/create", {
+      .post(`${API_HOST}/api/active/medicine/create`, {
         name,
         image,
         description,
@@ -86,7 +115,7 @@ export function getAlarm(medicineId, id) {
   return {
     type: GET_ALARM,
     payload: axios
-      .post("http://localhost:3005/api/alarm/get", { medicineId, id })
+      .post(`${API_HOST}/api/alarm/get`, { medicineId, id })
       .then(response => response.data)
       .catch(console.log)
   };
@@ -96,7 +125,7 @@ export function deleteAlarm(medicineId, id) {
   return {
     type: DELETE_ALARM,
     payload: axios
-      .post("http://localhost:3005/api/alarm/delete", { medicineId, id })
+      .post(`${API_HOST}/api/alarm/delete`, { medicineId, id })
       .then(response => {
         console.log(response.data);
         return response.data;
@@ -116,7 +145,7 @@ export function addAlarm(
   return {
     type: ADD_ALARM,
     payload: axios
-      .post("http://localhost:3005/api/alarm/add", {
+      .post(`${API_HOST}/api/alarm/add`, {
         medicineId,
         id,
         interval,
@@ -141,7 +170,7 @@ export function createColors({
   return {
     type: CREATE_COLORS,
     payload: axios
-      .post("http://localhost:3005/api/colors", {
+      .post(`${API_HOST}/api/colors`, {
         firstColor,
         secondColor,
         thirdColor,
@@ -167,7 +196,7 @@ export function updateColors({
   return {
     type: UPDATE_COLORS,
     payload: axios
-      .post("http://localhost:3005/api/colors/update", {
+      .post(`${API_HOST}/api/colors/update`, {
         firstColor,
         secondColor,
         thirdColor,
@@ -185,7 +214,7 @@ export function getColors(id) {
   return {
     type: GET_COLORS,
     payload: axios
-      .get(`http://localhost:3005/api/colors/${id}`)
+      .get(`${API_HOST}/api/colors/${id}`)
       .then(response => {
         if (response.data.length) {
           return response.data;
@@ -210,7 +239,7 @@ export function retrieveUser(email, password) {
   return {
     type: RETRIEVE_USER,
     payload: axios
-      .post("http://localhost:3005/api/auth/", { email, password })
+      .post(`${API_HOST}/api/auth/`, { email, password })
       .then(response => response.data)
       .catch(console.log)
   };
@@ -220,7 +249,7 @@ export function retrieveMedicine(id) {
   return {
     type: RETRIEVE_MEDICINE,
     payload: axios
-      .get(`http://localhost:3005/api/medicine/${id}`)
+      .get(`${API_HOST}/api/medicine/${id}`)
       .then(res => res.data)
       .catch(console.log)
   };
@@ -230,7 +259,7 @@ export function createMedicine({ name, image, description, rxcuis, id }) {
   return {
     type: CREATE_MEDICINE,
     payload: axios
-      .post("http://localhost:3005/api/createmedicine", {
+      .post(`${API_HOST}/api/createmedicine`, {
         name,
         image,
         description,
@@ -263,18 +292,17 @@ export function editMedicine(id) {
   return {
     type: EDIT_MEDICINE,
     payload: axios
-      .get(`http://localhost:3005/api/edit/${id}`)
+      .get(`${API_HOST}/api/edit/${id}`)
       .then(response => response.data)
       .catch(console.log)
   };
 }
 
 export function deleteMedicine(id, userId) {
-  console.log(id, userId);
   return {
     type: DELETE_MEDICINE,
     payload: axios
-      .delete(`http://localhost:3005/api/deletemedicine`, {
+      .delete(`${API_HOST}/api/deletemedicine`, {
         params: { id, userId }
       })
       .then(response => response.data)
@@ -285,6 +313,16 @@ export function deleteMedicine(id, userId) {
 //Reducer
 export default function user(state = initialState, action = {}) {
   switch (action.type) {
+    case LOADING_FALSE:
+      return Object.assign({}, state, {
+        loading: action.payload
+      });
+
+    case LOADING_TRUE:
+      return Object.assign({}, state, {
+        loading: action.payload
+      });
+
     // USER
     case `${RETRIEVE_USER}_PENDING`:
       return Object.assign({}, state, { isLoading: true });
@@ -296,6 +334,22 @@ export default function user(state = initialState, action = {}) {
       });
 
     case `${RETRIEVE_USER}_REJECTED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didError: true
+      });
+
+    // CREATE USER
+    case `${CREATE_USER}_PENDING`:
+      return Object.assign({}, state, { isLoading: true });
+
+    case `${CREATE_USER}_FULFILLED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        user: action.payload
+      });
+
+    case `${CREATE_USER}_REJECTED`:
       return Object.assign({}, state, {
         isLoading: false,
         didError: true

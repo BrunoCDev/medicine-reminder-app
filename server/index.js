@@ -1,3 +1,4 @@
+require("dotenv").config();
 // REQUIRE DEPENDENCIES
 const { json } = require("body-parser");
 const cors = require("cors");
@@ -9,7 +10,7 @@ const uc = require("./controllers/userController");
 
 const PORT = 3005;
 
-const { CONNECTION_STRING, SESSION_SECRET } = require("./config");
+const { CONNECTION_STRING, SESSION_SECRET, API_HOST } = process.env;
 
 // MAKE PORT AND APP
 const app = express();
@@ -38,7 +39,7 @@ app.use(
 );
 
 app.post("/api/auth", uc.getUser);
-app.post("/api/user", uc.createUser);
+app.post("/api/create", uc.createUser);
 app.get("/api/medicine/:id", uc.getMedicine);
 app.post("/api/createmedicine", uc.createMedicine);
 app.get("/api/edit/:id", uc.editMedicine);
@@ -51,7 +52,7 @@ app.post("/api/alarm/get", uc.getAlarm);
 app.post("/api/alarm/delete", uc.deleteAlarm);
 app.post("/api/active/medicine/create", uc.createActiveMedicine);
 app.post("/api/colors/delete", uc.deleteColors);
-app.post("http://localhost:3005/api/user/get", uc.getUserById);
+app.post("/api/user/get", uc.getUserById);
 
 // APP LISTEN
 app.listen(PORT, () => {

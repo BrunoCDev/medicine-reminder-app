@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { View, Alert } from "react-native";
+import { View, Alert, AsyncStorage } from "react-native";
 import { Card, Button, FormLabel, FormInput } from "react-native-elements";
 import { onCreateAccount } from "./../auth";
 import { connect } from "react-redux";
-import { retrieveUser } from "./../ducks/user";
+import { retrieveUser, createUser, loadingTrue } from "./../ducks/user";
+import PushNotificationsHandler from "react-native-push-notification";
 
 class SignUp extends Component {
   constructor(props) {
@@ -14,6 +15,11 @@ class SignUp extends Component {
       password2: ""
     };
   }
+
+  componentDidMount() {
+    PushNotificationsHandler.requestPermissions();
+  }
+
   render() {
     const { navigation } = this.props;
     const { email, password, password2 } = this.state;
@@ -51,15 +57,17 @@ class SignUp extends Component {
                   "Please enter a valid Email"
                 );
               } else {
-                onCreateAccount(email, password).then(res => {
-                  if (res.id) {
-                    this.props.retrieveUser(email, password);
-                    navigation.navigate("SignedIn");
+                this.props.createUser(email, password).then(res => {
+                  if (this.props.user.id) {
+                    AsyncStorage.setItem(
+                      "user",
+                      this.props.user.id.toString()
+                    ).then(() => {
+                      this.props.loadingTrue();
+                      this.props.navigation.navigate("Home");
+                    });
                   } else {
-                    Alert.alert(
-                      "There was a problem",
-                      "Try using another email"
-                    );
+                    Alert.alert("Error", "Something went wrong");
                   }
                 });
               }
@@ -80,4 +88,8 @@ class SignUp extends Component {
 
 const mapStateToProps = state => state;
 
-export default connect(mapStateToProps, { retrieveUser })(SignUp);
+export default connect(mapStateToProps, {
+  retrieveUser,
+  createUser,
+  loadingTrue
+})(SignUp);
