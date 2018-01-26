@@ -216,19 +216,17 @@ export function getColors(id) {
     payload: axios
       .get(`${API_HOST}/api/colors/${id}`)
       .then(response => {
-        if (response.data.length) {
+        if (response.data.id) {
           return response.data;
         } else {
-          return [
-            {
-              first: "rgb(33,33,33)",
-              second: "rgb(18,18,18)",
-              third: "rgb(83,83,83)",
-              button: "grey",
-              card: "#535353",
-              textcolor: "white"
-            }
-          ];
+          return {
+            first: "rgb(33,33,33)",
+            second: "rgb(18,18,18)",
+            third: "rgb(83,83,83)",
+            button: "grey",
+            card: "#535353",
+            textcolor: "white"
+          };
         }
       })
       .catch(console.log)
@@ -458,7 +456,7 @@ export default function user(state = initialState, action = {}) {
     case `${GET_COLORS}_FULFILLED`:
       return Object.assign({}, state, {
         isLoading: false,
-        backgroundColors: action.payload[0]
+        backgroundColors: action.payload
       });
 
     case `${GET_COLORS}_REJECTED`:

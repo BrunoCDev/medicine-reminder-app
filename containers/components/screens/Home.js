@@ -74,17 +74,20 @@ class Home extends Component {
           if (this.props.user) {
             const { id } = this.props.user;
             this.props.retrieveMedicine(id).then(() => {
-              this.props.loadingFalse();
-              if (!this.props.medicine.length) {
-                setTimeout(
-                  () =>
-                    Alert.alert(
-                      "Instructions",
-                      `You can Click the "+" sign below to get started!`
-                    ),
-                  1000
-                );
-              }
+              this.props.getColors(id).then(() => {
+                console.log(this.props);
+                this.props.loadingFalse();
+                if (!this.props.medicine.length) {
+                  setTimeout(
+                    () =>
+                      Alert.alert(
+                        "Instructions",
+                        `You can Click the "+" sign below to get started!`
+                      ),
+                    2000
+                  );
+                }
+              });
             });
           }
         });
@@ -124,87 +127,90 @@ class Home extends Component {
       }
     });
 
+    this.props.loading ? <Loading /> : null;
     return (
       <View style={{ flex: 1 }}>
-        {this.props.loading ? (
-          <Loading />
-        ) : (
-          <Container>
-            <AnimatedLinearGradient
-              customColors={[
-                `${backgroundColors.first}`,
-                `${backgroundColors.second}`,
-                `${backgroundColors.third}`
-              ]}
-              speed={5000}
-            />
+        <Container>
+          <AnimatedLinearGradient
+            customColors={[
+              `${backgroundColors.first}`,
+              `${backgroundColors.second}`,
+              `${backgroundColors.third}`
+            ]}
+            speed={5000}
+          />
 
-            <Content>
-              <ScrollView>
-                <List
-                  dataArray={medicine}
-                  renderRow={item => (
-                    <ListItem
-                      style={{ height: 100 }}
-                      onPress={() => {
-                        this.props
-                          .editMedicine(item.id)
-                          .then(() => navigation.navigate("Profile"));
-                      }}
-                    >
-                      <Thumbnail
-                        square
-                        size={120}
-                        source={{ uri: item.image }}
-                      />
-                      <Body>
-                        <Text style={styles.title}>{item.name}</Text>
-                        <Text note style={styles.description}>
-                          {item.description}
-                        </Text>
-                      </Body>
-                    </ListItem>
-                  )}
-                />
-              </ScrollView>
-            </Content>
-            <Footer>
-              <FooterTab style={styles.footer}>
-                <Button
-                  onPress={() => navigation.navigate("Colors")}
-                  onLongPress={() => {
-                    Alert.alert("Colors", "Colors sucessfully removed");
-                    this.props.loadingTrue();
-                    this.props
-                      .deleteColors(this.props.user.id)
-                      .then(() => this.props.loadingFalse());
-                  }}
-                  delayLongPress={3000}
-                >
-                  <Icon name="format-color-fill" style={styles.footerButton} />
-                </Button>
-                <Button
-                  onPress={() => this.props.navigation.navigate("Create")}
-                >
-                  <Icon name="plus-box" style={styles.footerButton} />
-                </Button>
-                <Button
-                  onPress={() => navigation.navigate("Interaction")}
-                  onLongPress={() => {
-                    Alert.alert("Logout", "Logout Sucessful");
-                    this.props.loadingTrue();
-                    AsyncStorage.setItem("user", "").then(() => {
-                      this.props.navigation.navigate("SignUp");
-                    });
-                  }}
-                  delayLongPress={3000}
-                >
-                  <Icon name="link-variant" style={styles.footerButton} />
-                </Button>
-              </FooterTab>
-            </Footer>
-          </Container>
-        )}
+          <Content>
+            <ScrollView>
+              <List
+                dataArray={medicine}
+                renderRow={item => (
+                  <ListItem
+                    style={{ height: 100 }}
+                    onPress={() => {
+                      this.props.loadingTrue();
+                      this.props
+                        .editMedicine(item.id)
+                        .then(() => navigation.navigate("Profile"));
+                    }}
+                  >
+                    <Thumbnail square size={120} source={{ uri: item.image }} />
+                    <Body>
+                      <Text style={styles.title}>{item.name}</Text>
+                      <Text note style={styles.description}>
+                        {item.description}
+                      </Text>
+                    </Body>
+                  </ListItem>
+                )}
+              />
+            </ScrollView>
+          </Content>
+          <Footer>
+            <FooterTab style={styles.footer}>
+              <Button
+                onPress={() => {
+                  this.props.loadingTrue();
+                  navigation.navigate("Colors");
+                }}
+                onLongPress={() => {
+                  this.props.loadingTrue();
+                  Alert.alert("Colors", "Colors sucessfully removed");
+                  this.props
+                    .deleteColors(this.props.user.id)
+                    .then(() => this.props.loadingFalse());
+                }}
+                delayLongPress={3000}
+              >
+                <Icon name="format-color-fill" style={styles.footerButton} />
+              </Button>
+              <Button
+                onPress={() => {
+                  this.props.loadingTrue();
+                  this.props.navigation.navigate("Create");
+                }}
+              >
+                <Icon name="plus-box" style={styles.footerButton} />
+              </Button>
+              <Button
+                onPress={() => {
+                  this.props.loadingTrue();
+                  navigation.navigate("Interaction");
+                }}
+                onLongPress={() => {
+                  Alert.alert("Logout", "Logout Sucessful");
+                  this.props.loadingTrue();
+                  AsyncStorage.setItem("user", "").then(() => {
+                    this.props.navigation.navigate("SignUp");
+                  });
+                }}
+                delayLongPress={3000}
+              >
+                <Icon name="link-variant" style={styles.footerButton} />
+              </Button>
+            </FooterTab>
+          </Footer>
+        </Container>
       </View>
     );
   }

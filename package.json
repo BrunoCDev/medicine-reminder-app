@@ -6,7 +6,6 @@
     "babel-preset-react-native-stage-0": "1.0.1",
     "fs-extra": "4.0.2",
     "jest-expo": "21.0.2",
-    "react-native-dotenv": "0.1.1",
     "react-test-renderer": "16.0.0-beta.5",
     "replace-in-file": "3.0.0"
   },
@@ -17,7 +16,7 @@
     "start:server": "node server",
     "now-start": "yarn start:server",
     "deploy:server": "now --public",
-    "deploy:app": "",
+    "deploy:app": "cd android && ./gradlew assembleRelease",
     "test": "node node_modules/jest/bin/jest.js --watch"
   },
   "jest": {
@@ -29,6 +28,7 @@
     "bcryptjs": "2.4.3",
     "body-parser": "1.18.2",
     "cors": "2.8.4",
+    "dotenv": "4.0.0",
     "express": "4.16.2",
     "express-session": "1.15.6",
     "fbjs": "0.8.16",
@@ -42,11 +42,13 @@
     "react-native-action-button": "2.8.3",
     "react-native-animated-linear-gradient": "1.1.2",
     "react-native-calendar-events": "1.4.3",
+    "react-native-dotenv": "0.1.1",
     "react-native-easy-grid": "0.1.16",
     "react-native-elements": "0.18.5",
     "react-native-firebase": "3.1.1",
     "react-native-image-picker": "0.26.7",
     "react-native-linear-gradient": "2.4.0",
+    "react-native-loading-spinner-overlay": "0.5.2",
     "react-native-push-notification": "3.0.2",
     "react-native-vector-icons": "4.5.0",
     "react-navigation": "1.0.0-beta.23",

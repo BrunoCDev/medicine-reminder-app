@@ -6,6 +6,9 @@ import { retrieveUser } from "./../ducks/user";
 import axios from "axios";
 
 import { connect } from "react-redux";
+import { loadingFalse, loadingTrue } from "./../ducks/user";
+import { Loading } from "./Loading";
+import { API_HOST } from "react-native-dotenv";
 
 class Interaction extends Component {
   constructor(props) {
@@ -22,6 +25,10 @@ class Interaction extends Component {
     this.deleteInteractions = this.deleteInteractions.bind(this);
   }
 
+  componentDidMount() {
+    this.props.loadingFalse();
+  }
+
   deleteInteractions() {
     this.setState({ description: [] });
   }
@@ -30,7 +37,7 @@ class Interaction extends Component {
     const { id } = this.props.user;
     if (!this.state.description.length) {
       axios
-        .get(`http://localhost:3005/api/medicine/${id}`)
+        .get(`${API_HOST}/api/medicine/${id}`)
         .then(res => {
           res.data.map(({ rxcuis }, i) => {
             this.setState({ str: this.state.str + `${rxcuis}+` });
@@ -48,10 +55,12 @@ class Interaction extends Component {
                     this.state.description.push(
                       el.interactionPair[0].description
                     );
+                    this.props.loadingFalse();
                     this.setState({ loaded: true });
                   }
                 );
               } else {
+                this.props.loadingFalse();
                 Alert.alert(
                   "No Bad Reactions Found",
                   `We didn't find any bad reactions between these medicines`
@@ -65,6 +74,7 @@ class Interaction extends Component {
   }
 
   render() {
+    this.props.loading ? <Loading /> : null;
     return (
       <ScrollView style={{ paddingVertical: 20 }}>
         <Card title="Interactions">
@@ -72,7 +82,10 @@ class Interaction extends Component {
             buttonStyle={{ marginTop: 0 }}
             backgroundColor="#a7a7a7"
             title="Check"
-            onPress={() => this.checkForInteractions()}
+            onPress={() => {
+              this.props.loadingTrue();
+              this.checkForInteractions();
+            }}
           />
 
           {this.state.description.length ? (
@@ -108,4 +121,8 @@ class Interaction extends Component {
 
 const mapStateToProps = state => state;
 
-export default connect(mapStateToProps, { retrieveUser })(Interaction);
+export default connect(mapStateToProps, {
+  retrieveUser,
+  loadingFalse,
+  loadingTrue
+})(Interaction);

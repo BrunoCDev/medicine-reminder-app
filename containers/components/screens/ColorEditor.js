@@ -4,12 +4,14 @@ import { backgroundColors } from "./../ducks/user";
 import axios from "axios";
 
 import { connect } from "react-redux";
+import { Loading } from "./Loading";
 
 import {
   createColors,
   getColors,
   updateColors,
-  loadingTrue
+  loadingTrue,
+  loadingFalse
 } from "./../ducks/user";
 
 class ColorEditor extends Component {
@@ -23,6 +25,10 @@ class ColorEditor extends Component {
       cardColor: `${this.props.backgroundColors.card}`,
       textColor: `${this.props.backgroundColors.textcolor}`
     };
+  }
+
+  componentDidMount() {
+    this.props.loadingFalse();
   }
 
   render() {
@@ -42,6 +48,8 @@ class ColorEditor extends Component {
       card,
       textcolor
     } = this.props.backgroundColors;
+
+    this.props.loading ? <Loading /> : null;
     return (
       <View style={{ flex: 1 }}>
         <Text style={{ marginTop: 10, fontSize: 20, marginLeft: 10 }}>
@@ -90,25 +98,12 @@ class ColorEditor extends Component {
           onChangeText={e => this.setState({ textColor: e.toLowerCase() })}
         />
         <View style={{ marginTop: 20 }}>
-          {/* <Button
-            title="Reset"
-            color={this.props.backgroundColors.button}
-            onPress={() =>
-              this.setState({
-                firstColor: "rgb(33,33,33)",
-                secondColor: "rgb(18,18,18)",
-                thirdColor: "rgb(83,83,83)",
-                buttonColor: "grey",
-                cardColor: "#535353",
-                textColor: "white"
-              })
-            }
-          /> */}
           {this.props.backgroundColors.id ? (
             <Button
               title="Update"
               color={this.props.backgroundColors.button}
               onPress={() => {
+                this.props.loadingTrue();
                 const { id } = this.props.user;
                 this.props.updateColors({
                   firstColor: this.state.firstColor,
@@ -127,6 +122,7 @@ class ColorEditor extends Component {
               title="Save"
               color={this.props.backgroundColors.button}
               onPress={() => {
+                this.props.loadingTrue();
                 Alert.alert("Color Editor", "Theme was sucessfully saved!");
                 this.props.loadingTrue();
                 const { id } = this.props.user;
@@ -155,5 +151,6 @@ export default connect(mapStateToProps, {
   createColors,
   getColors,
   updateColors,
-  loadingTrue
+  loadingTrue,
+  loadingFalse
 })(ColorEditor);

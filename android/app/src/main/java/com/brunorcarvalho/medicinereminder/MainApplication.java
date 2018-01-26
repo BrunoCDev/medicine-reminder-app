@@ -25,7 +25,6 @@ import com.calendarevents.CalendarEventsPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
-
 import java.util.Arrays;
 import java.util.List;
 

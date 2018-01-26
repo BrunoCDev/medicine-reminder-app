@@ -1,8 +1,11 @@
 import React from "react";
-import { View, ActivityIndicator } from "react-native";
+import Spinner from "react-native-loading-spinner-overlay";
 
 export const Loading = () => (
-  <View style={{ flex: 1 }}>
-    <ActivityIndicator size="large" color="#0000ff" />
-  </View>
+  <Spinner
+    visible={true}
+    textContent={""}
+    color={"#6dff48"}
+    textStyle={{ color: "#1b2a39" }}
+  />
 );

@@ -30,6 +30,8 @@ import {
   FooterTab
 } from "native-base";
 
+import { Loading } from "./Loading";
+
 import PushController from "./../extras/PushController";
 import PushNotification from "react-native-push-notification";
 
@@ -41,7 +43,9 @@ import {
   createMedicine,
   retrieveRxcuis,
   addAlarm,
-  createMedicineActive
+  createMedicineActive,
+  loadingTrue,
+  loadingFalse
 } from "./../ducks/user";
 
 import { connect } from "react-redux";
@@ -64,6 +68,10 @@ class Create extends Component {
 
     this.createNewMedicine = this.createNewMedicine.bind(this);
     this.getImage = this.getImage.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.loadingFalse();
   }
 
   getImage = () => {
@@ -107,13 +115,11 @@ class Create extends Component {
                   const { startDate, time, interval } = this.state;
                   const medicineId = this.props.activeMedicine.id.toString();
                   let final = new Date(`${startDate}T${time}`);
-                  console.log(final);
                   if (startDate && time) {
                     PushNotification.localNotificationSchedule({
                       id: medicineId,
                       title: name,
                       message: description,
-                      bigText: { uri: this.state.image },
                       vibrate: true,
                       vibration: 1000,
                       repeatType: interval,
@@ -141,11 +147,13 @@ class Create extends Component {
                   }
                 });
             } else {
+              this.props.loadingFalse();
               Alert.alert("Error", "Something Went Wrong");
             }
           })
           .catch(console.log);
       } else {
+        this.props.loadingFalse();
         Alert.alert("Medicine not found", "Make sure the name is right!");
       }
     });
@@ -153,6 +161,7 @@ class Create extends Component {
 
   render() {
     const { navigation, backgroundColors } = this.props;
+    this.props.loading ? <Loading /> : null;
     return (
       <Container>
         <Content>
@@ -262,7 +271,10 @@ class Create extends Component {
         <Footer>
           <FooterTab>
             <Button
-              onPress={() => this.createNewMedicine()}
+              onPress={() => {
+                this.props.loadingTrue();
+                this.createNewMedicine();
+              }}
               style={{ backgroundColor: this.props.backgroundColors.button }}
             >
               <Text style={{ color: this.props.backgroundColors.textcolor }}>
@@ -283,5 +295,7 @@ export default connect(mapStateToProps, {
   createMedicine,
   retrieveRxcuis,
   addAlarm,
-  createMedicineActive
+  createMedicineActive,
+  loadingTrue,
+  loadingFalse
 })(Create);

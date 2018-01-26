@@ -176,7 +176,7 @@ class Profile extends Component {
                     <Button
                       color={`${backgroundColors.textcolor}`}
                       backgroundColor={`${backgroundColors.button}`}
-                      title="Set Date/Hour"
+                      title="Set Date"
                       buttonStyle={{ marginBottom: 15, width: 125 }}
                       onPress={() => {
                         const { action, date } = DatePickerAndroid.open({

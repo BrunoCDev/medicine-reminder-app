@@ -8,9 +8,9 @@ const session = require("express-session");
 
 const uc = require("./controllers/userController");
 
-const PORT = 3005;
-
 const { CONNECTION_STRING, SESSION_SECRET, API_HOST } = process.env;
+
+const PORT = process.env.PORT || 3005;
 
 // MAKE PORT AND APP
 const app = express();

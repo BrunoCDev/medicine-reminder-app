@@ -21,7 +21,6 @@ const createUser = (req, res, next) => {
   const db = req.app.get("db");
   const { email, password } = req.body;
   bcrypt.hash(password, parseInt(process.env.SALT, 10), function(err, hash) {
-    console.log(email, hash);
     db
       .createUser([email, hash])
       .then(response => res.json(response[0]))
@@ -95,7 +94,7 @@ const getColors = (req, res, next) => {
   const { id } = req.params;
   db
     .getColors([id])
-    .then(response => res.json(response))
+    .then(response => res.json(response[0]))
     .catch(console.log);
 };
 
