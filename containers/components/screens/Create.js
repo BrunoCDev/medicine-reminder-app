@@ -32,7 +32,6 @@ import {
 
 import { Loading } from "./Loading";
 
-import PushController from "./../extras/PushController";
 import PushNotification from "react-native-push-notification";
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -76,21 +75,20 @@ class Create extends Component {
 
   getImage = () => {
     ImagePicker.showImagePicker({ cameraType: "back" }, response => {
+      this.props.loadingTrue();
       let source = response.uri;
       this.setState(
         {
           image: source
         },
-        () => {
-          return true;
-        }
+        () => this.props.loadingFalse()
       );
     });
   };
 
   createNewMedicine() {
     const { id } = this.props.user;
-    const { image, name, description, interval } = this.state;
+    const { image, name, description } = this.state;
     this.props.retrieveRxcuis(name).then(() => {
       if (this.props.rxcuis) {
         this.props
@@ -112,39 +110,8 @@ class Create extends Component {
                   id
                 )
                 .then(response => {
-                  const { startDate, time, interval } = this.state;
-                  const medicineId = this.props.activeMedicine.id.toString();
-                  let final = new Date(`${startDate}T${time}`);
-                  if (startDate && time) {
-                    PushNotification.localNotificationSchedule({
-                      id: medicineId,
-                      title: name,
-                      message: description,
-                      vibrate: true,
-                      vibration: 1000,
-                      repeatType: interval,
-                      date: final
-                    });
-                    this.props.addAlarm(
-                      medicineId,
-                      id,
-                      interval,
-                      final,
-                      this.state.startDate,
-                      this.state.time
-                    );
-                    Alert.alert(
-                      "Medicine",
-                      "Medicine was sucessfully added with an Alarm"
-                    );
-                    this.props.navigation.navigate("Home");
-                  } else {
-                    Alert.alert(
-                      "Medicine",
-                      "Medicine was sucessfully added without an Alarm"
-                    );
-                    this.props.navigation.navigate("Home");
-                  }
+                  Alert.alert("Medicine", "Medicine was sucessfully added");
+                  this.props.navigation.navigate("Home");
                 });
             } else {
               this.props.loadingFalse();
@@ -192,8 +159,7 @@ class Create extends Component {
               <TouchableHighlight
                 onPress={this.getImage}
                 style={{
-                  height: 250,
-                  width: null,
+                  height: 350,
                   flex: 1
                 }}
               >
@@ -203,68 +169,9 @@ class Create extends Component {
                       ? "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png"
                       : this.state.image
                   }}
-                  style={{ height: 150, width: null, flex: 1 }}
+                  style={{ height: 350, flex: 1 }}
                 />
               </TouchableHighlight>
-            </CardItem>
-            <Picker
-              selectedValue={this.state.interval}
-              onValueChange={(itemValue, itemIndex) =>
-                this.setState({ interval: itemValue })
-              }
-            >
-              <Picker.Item label="Daily" value="day" />
-              <Picker.Item label="Weekly" value="week" />
-            </Picker>
-            <CardItem>
-              <Left />
-              <Body>
-                <Button
-                  style={{
-                    backgroundColor: this.props.backgroundColors.button
-                  }}
-                  onPress={() => {
-                    const { action, date } = DatePickerAndroid.open({
-                      date: new Date()
-                    }).then(r => {
-                      let month = parseInt(r.month, 10) + 1;
-                      month < 10
-                        ? (month = "0" + month.toString())
-                        : (month = month.toString());
-                      let day = parseInt(r.day, 10);
-                      day < 10
-                        ? (day = "0" + day.toString())
-                        : (day = day.toString());
-                      this.setState({
-                        startDate: `${r.year}-${month}-${day}`
-                      });
-                      TimePickerAndroid.open({}).then(r2 => {
-                        let hour = parseInt(r2.hour, 10);
-                        hour < 10
-                          ? (hour = "0" + hour.toString())
-                          : (hour = hour.toString());
-                        let minutes = parseInt(r2.minute, 10);
-                        minutes < 10
-                          ? (minutes = "0" + minutes.toString())
-                          : (minutes = minutes.toString());
-                        this.setState({
-                          time: `${hour}:${minutes}:00`
-                        });
-                      });
-                    });
-                  }}
-                >
-                  <Text
-                    style={{ color: this.props.backgroundColors.textcolor }}
-                  >
-                    Set Date
-                  </Text>
-                </Button>
-              </Body>
-              <Right>
-                <Text>{this.state.startDate}</Text>
-                <Text>{this.state.time}</Text>
-              </Right>
             </CardItem>
           </Card>
         </Content>
@@ -277,13 +184,12 @@ class Create extends Component {
               }}
               style={{ backgroundColor: this.props.backgroundColors.button }}
             >
-              <Text style={{ color: this.props.backgroundColors.textcolor }}>
+              <Text style={{ color: this.props.backgroundColors.footer_icon }}>
                 Save
               </Text>
             </Button>
           </FooterTab>
         </Footer>
-        <PushController />
       </Container>
     );
   }

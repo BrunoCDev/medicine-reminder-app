@@ -33,6 +33,7 @@ import {
 } from "native-base";
 
 import { Loading } from "./Loading";
+import PushNotification from "react-native-push-notification";
 
 import { Card } from "react-native-elements";
 // import Button from "antd-mobile/lib/button";
@@ -54,7 +55,8 @@ import {
   deleteColors,
   getUserById,
   loadingFalse,
-  loadingTrue
+  loadingTrue,
+  deleteAlarms
 } from "./../ducks/user";
 
 class Home extends Component {
@@ -74,8 +76,20 @@ class Home extends Component {
           if (this.props.user) {
             const { id } = this.props.user;
             this.props.retrieveMedicine(id).then(() => {
+              PushNotification.configure({
+                onNotification: notification => {
+                  if (notification.notificationId) {
+                    this.props
+                      .editMedicine(notification.notificationId)
+                      .then(() => {
+                        this.props.navigation.navigate("Profile");
+                        this.props.loadingFalse();
+                      });
+                  }
+                },
+                requestPermissions: true
+              });
               this.props.getColors(id).then(() => {
-                console.log(this.props);
                 this.props.loadingFalse();
                 if (!this.props.medicine.length) {
                   setTimeout(
@@ -84,7 +98,7 @@ class Home extends Component {
                         "Instructions",
                         `You can Click the "+" sign below to get started!`
                       ),
-                    2000
+                    1000
                   );
                 }
               });
@@ -92,14 +106,11 @@ class Home extends Component {
           }
         });
       } else {
+        Alert.alert("Error", "Something went wrong!");
         this.props.navigation.navigate("SignUp");
       }
     });
-    // this.props.getColors(id);
-    // this.props.resetActiveMedicine();
   }
-
-  componentWillReceiveProps(newProps) {}
 
   render() {
     const { navigation, user, medicine, backgroundColors } = this.props;
@@ -112,10 +123,10 @@ class Home extends Component {
       },
       footerButton: {
         fontSize: 25,
-        color: `${backgroundColors.textcolor}`
+        color: `${backgroundColors.footer_icon}`
       },
       footer: {
-        backgroundColor: `${backgroundColors.card}`
+        backgroundColor: `${backgroundColors.button}`
       },
       title: {
         color: `${backgroundColors.textcolor}`,
@@ -176,9 +187,11 @@ class Home extends Component {
                 onLongPress={() => {
                   this.props.loadingTrue();
                   Alert.alert("Colors", "Colors sucessfully removed");
-                  this.props
-                    .deleteColors(this.props.user.id)
-                    .then(() => this.props.loadingFalse());
+                  this.props.deleteColors(this.props.user.id).then(() => {
+                    this.props
+                      .getColors(this.props.user.id)
+                      .then(() => this.props.navigation.navigate("Home"));
+                  });
                 }}
                 delayLongPress={3000}
               >
@@ -189,6 +202,12 @@ class Home extends Component {
                   this.props.loadingTrue();
                   this.props.navigation.navigate("Create");
                 }}
+                onLongPress={() => {
+                  PushNotification.cancelAllLocalNotifications();
+                  this.props.deleteAlarms(this.props.user.id);
+                  Alert.alert("Alarm", "All alarms deleted");
+                }}
+                delayLongPress={3000}
               >
                 <Icon name="plus-box" style={styles.footerButton} />
               </Button>
@@ -202,6 +221,7 @@ class Home extends Component {
                   this.props.loadingTrue();
                   AsyncStorage.setItem("user", "").then(() => {
                     this.props.navigation.navigate("SignUp");
+                    this.props.loadingFalse();
                   });
                 }}
                 delayLongPress={3000}
@@ -227,110 +247,6 @@ export default connect(mapStateToProps, {
   deleteColors,
   getUserById,
   loadingFalse,
-  loadingTrue
+  loadingTrue,
+  deleteAlarms
 })(Home);
-
-// MENU BUTTONS STYLE
-
-/* <View style={{ flex: 1, backgroundColor: "transparent" }}>
-        <AnimatedLinearGradient
-          customColors={[
-            `${backgroundColors.first}`,
-            `${backgroundColors.second}`,
-            `${backgroundColors.third}`
-          ]}
-          speed={5000}
-        />
-        <Button
-          raised
-          buttonStyle={{
-            backgroundColor: `${backgroundColors.button}`
-          }}
-          title="Create New"
-          onPress={() => navigation.navigate("Create")}
-        />
-        <ScrollView>
-          {medicine.map(({ name, image, description, id }, i) => (
-            <Card
-              containerStyle={{
-                backgroundColor: `${backgroundColors.card}`
-              }}
-              title={name}
-              titleStyle={{
-                fontSize: 30,
-                color: `${backgroundColors.textcolor}`
-              }}
-              image={{ uri: image }}
-              imageStyle={{ height: 300 }}
-              key={id}
-              editable={true}
-            >
-              <Text
-                style={{
-                  marginBottom: 15,
-                  fontSize: 20,
-                  color: `${backgroundColors.textcolor}`,
-                  marginLeft: 15
-                }}
-              >
-                {description}
-              </Text>
-
-              <Button
-                small
-                title={"Set Alarm"}
-                buttonStyle={{
-                  width: 200,
-                  backgroundColor: `${backgroundColors.button}`
-                }}
-                textStyle={{ fontSize: 15, letterSpacing: 10 }}
-                onPress={() => {
-                  this.props
-                    .editMedicine(id)
-                    .then(() => navigation.navigate("Profile"));
-                }}
-              />
-              <Button
-                small
-                title={"Delete"}
-                buttonStyle={{
-                  width: 200,
-                  backgroundColor: `${backgroundColors.button}`,
-                  marginTop: 20
-                }}
-                textStyle={{ fontSize: 15, letterSpacing: 10 }}
-                onPress={() => {
-                  this.props
-                    .deleteMedicine(id, this.props.user.id)
-                    .then(() =>
-                      this.props.retrieveMedicine(this.props.user.id)
-                    );
-                  Alert.alert("Medicine", "Medicine sucessfully removed");
-                }}
-              />
-            </Card>
-          ))}
-        </ScrollView> */
-/* MENU BUTTONS! */
-/* <ActionButton
-          buttonColor={`${backgroundColors.button}`}
-          active={true}
-          style={{ marginLeft: 10 }}
-          position={"right"}
-          autoInactive={true}
-        >
-          <ActionButton.Item
-            buttonColor={`${backgroundColors.button}`}
-            onPress={() => navigation.navigate("Interaction")}
-          >
-            <Icon name="link-variant" style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-
-          <ActionButton.Item
-            buttonColor={`${backgroundColors.button}`}
-            onPress={() => navigation.navigate("Colors")}
-          >
-            <Icon name="palette" style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-        </ActionButton> */
-/* </View> */

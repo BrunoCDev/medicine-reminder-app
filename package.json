@@ -42,6 +42,8 @@
     "react-native-action-button": "2.8.3",
     "react-native-animated-linear-gradient": "1.1.2",
     "react-native-calendar-events": "1.4.3",
+    "react-native-color-picker": "0.4.0",
+    "react-native-color-wheel": "0.1.4",
     "react-native-dotenv": "0.1.1",
     "react-native-easy-grid": "0.1.16",
     "react-native-elements": "0.18.5",

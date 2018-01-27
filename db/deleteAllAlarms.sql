@@ -1,0 +1,1 @@
+DELETE FROM alarm WHERE user_id = $1;

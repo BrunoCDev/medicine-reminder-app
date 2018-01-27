@@ -73,6 +73,7 @@ const addColors = (req, res, next) => {
     buttonColor,
     cardColor,
     textColor,
+    footer_icon,
     id
   } = req.body;
   db
@@ -83,6 +84,7 @@ const addColors = (req, res, next) => {
       buttonColor,
       cardColor,
       textColor,
+      footer_icon,
       id
     ])
     .then(response => res.json(response))
@@ -107,6 +109,7 @@ const updateColors = (req, res, next) => {
     buttonColor,
     cardColor,
     textColor,
+    footer_icon,
     id
   } = req.body;
   db
@@ -117,6 +120,7 @@ const updateColors = (req, res, next) => {
       buttonColor,
       cardColor,
       textColor,
+      footer_icon,
       id
     ])
     .then(response => res.json(response))
@@ -184,6 +188,15 @@ const getUserById = (req, res, next) => {
     .catch(console.log);
 };
 
+const deleteAllAlarms = (req, res, next) => {
+  const db = req.app.get("db");
+  const { id } = req.body;
+  db
+    .deleteAllAlarms(id)
+    .then(response => res.json(response))
+    .catch(console.log);
+};
+
 module.exports = {
   getUser,
   createUser,
@@ -199,5 +212,6 @@ module.exports = {
   deleteAlarm,
   createActiveMedicine,
   deleteColors,
-  getUserById
+  getUserById,
+  deleteAllAlarms
 };

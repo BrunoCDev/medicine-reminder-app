@@ -5,7 +5,7 @@ export const Loading = () => (
   <Spinner
     visible={true}
     textContent={""}
-    color={"#6dff48"}
+    color={"#3a60d9"}
     textStyle={{ color: "#1b2a39" }}
   />
 );

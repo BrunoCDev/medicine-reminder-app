@@ -67,7 +67,7 @@ export const SignedIn = StackNavigator({
   Profile: {
     screen: Profile,
     navigationOptions: {
-      headerStyle: { height: 0 }
+      title: "Medicine"
     }
   },
   Create: {

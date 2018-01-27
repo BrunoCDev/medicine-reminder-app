@@ -80,7 +80,8 @@ class Interaction extends Component {
         <Card title="Interactions">
           <Button
             buttonStyle={{ marginTop: 0 }}
-            backgroundColor="#a7a7a7"
+            backgroundColor={`${this.props.backgroundColors.button}`}
+            color={`${this.props.backgroundColors.footer_icon}`}
             title="Check"
             onPress={() => {
               this.props.loadingTrue();
@@ -105,7 +106,8 @@ class Interaction extends Component {
           {this.state.description.length ? (
             <Button
               buttonStyle={{ marginTop: 20 }}
-              backgroundColor="#a7a7a7"
+              backgroundColor={`${this.props.backgroundColors.button}`}
+              color={`${this.props.backgroundColors.footer_icon}`}
               title="Delete"
               onPress={() => {
                 this.deleteInteractions();

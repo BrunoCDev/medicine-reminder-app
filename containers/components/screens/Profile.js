@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { Card, Button, Text } from "react-native-elements";
 import { connect } from "react-redux";
-import PushController from "./../extras/PushController";
 import PushNotification from "react-native-push-notification";
 import AnimatedLinearGradient, {
   presetColors
@@ -22,7 +21,8 @@ import {
   deleteMedicine,
   addAlarm,
   loadingTrue,
-  loadingFalse
+  loadingFalse,
+  retrieveMedicine
 } from "./../ducks/user";
 
 import { Loading } from "./Loading";
@@ -34,12 +34,16 @@ class Profile extends Component {
     super(props);
 
     this.state = {
-      interval: "day"
+      interval: null,
+      alarm: false,
+      startDate: "",
+      time: ""
     };
   }
 
   componentDidMount() {
     this.props.loadingTrue();
+    this.setState({ alarm: false });
     this.props
       .getAlarm(this.props.activeMedicine.id, this.props.user.id)
       .then(() => {
@@ -52,14 +56,21 @@ class Profile extends Component {
     const { description, name } = this.props.activeMedicine;
     const { interval } = this.state;
     const medicineId = this.props.activeMedicine.id.toString();
-    let final = new Date(`${this.state.startDate}T${this.state.time}`);
+    let final = new Date(`${this.state.startDate}T${this.state.time}-06:00`);
+    PushNotification.configure({
+      onNotification: notification => {
+        this.props.retrieveMedicine(this.props.activeMedicine.id).then(() => {
+          this.props.navigation.navigate("Profile");
+        });
+      },
+      requestPermissions: true
+    });
     PushNotification.localNotificationSchedule({
       id: medicineId,
       title: name,
       message: description,
       vibrate: true,
       vibration: 1000,
-      repeatType: interval,
       date: final
     });
     this.props.addAlarm(
@@ -70,7 +81,7 @@ class Profile extends Component {
       this.state.displayDate,
       this.state.displayTime
     );
-    Alert.alert("Alarm", "Alarm was sucessfully added");
+    Alert.alert("Alarm", "Alarm was successfully added");
   }
 
   render() {
@@ -101,7 +112,7 @@ class Profile extends Component {
               }}
               title={activeMedicine.name}
               image={{ uri: activeMedicine.image }}
-              imageStyle={{ height: 250 }}
+              imageStyle={{ height: 230 }}
               editable={true}
             >
               <Text
@@ -123,7 +134,7 @@ class Profile extends Component {
                       color: `${backgroundColors.textcolor}`
                     }}
                   >
-                    Start Date: {this.props.alarm.display_date} Hour:{" "}
+                    Start Date: {this.state.startDate} Hour:{" "}
                     {this.props.alarm.display_time}
                   </Text>
                   <Text
@@ -133,22 +144,44 @@ class Profile extends Component {
                       color: `${backgroundColors.textcolor}`
                     }}
                   >
-                    Interval: {this.props.alarm.interval}
+                    {this.props.alarm.interval === "day"
+                      ? `Interval: Daily`
+                      : this.props.alarm.interval === "week"
+                        ? `Interval: Weekly`
+                        : `Interval: Only Once`}
                   </Text>
                   <Button
-                    color={`${backgroundColors.textcolor}`}
+                    color={`${backgroundColors.footer_icon}`}
                     backgroundColor={`${backgroundColors.button}`}
                     buttonStyle={{ marginBottom: 10, marginTop: 10 }}
-                    title="Delete Alarm"
+                    title="Stop Alarm"
                     onPress={() => {
-                      PushNotification.cancelLocalNotifications({
-                        id: this.props.activeMedicine.id.toString()
-                      });
-                      this.props.deleteAlarm(
-                        this.props.activeMedicine.id,
-                        this.props.user.id
+                      Alert.alert(
+                        "Alarm",
+                        "Are you sure you want to remove this Alarm?",
+                        [
+                          {
+                            text: "Cancel"
+                          },
+                          {
+                            text: "Yes",
+                            onPress: () => {
+                              PushNotification.cancelLocalNotifications({
+                                id: this.props.activeMedicine.id.toString()
+                              });
+                              this.props.deleteAlarm(
+                                this.props.activeMedicine.id,
+                                this.props.user.id
+                              );
+                              this.setState({ startDate: false, time: false });
+                              Alert.alert(
+                                "Alarm",
+                                "Alarm was successfully removed"
+                              );
+                            }
+                          }
+                        ]
                       );
-                      Alert.alert("Alarm", "Alarm was sucessfully removed");
                     }}
                   />
                 </View>
@@ -164,6 +197,8 @@ class Profile extends Component {
                       this.setState({ interval: itemValue })
                     }
                   >
+                    <Picker.Item label="Select an Interval" value={false} />
+                    <Picker.Item label="Only Once" value={false} />
                     <Picker.Item label="Daily" value="day" />
                     <Picker.Item label="Weekly" value="week" />
                   </Picker>
@@ -174,7 +209,7 @@ class Profile extends Component {
                     }}
                   >
                     <Button
-                      color={`${backgroundColors.textcolor}`}
+                      color={`${backgroundColors.footer_icon}`}
                       backgroundColor={`${backgroundColors.button}`}
                       title="Set Date"
                       buttonStyle={{ marginBottom: 15, width: 125 }}
@@ -182,70 +217,140 @@ class Profile extends Component {
                         const { action, date } = DatePickerAndroid.open({
                           date: new Date()
                         }).then(r => {
-                          let month = parseInt(r.month, 10) + 1;
-                          month < 10
-                            ? (month = "0" + month.toString())
-                            : (month = month.toString());
-                          let day = parseInt(r.day, 10);
-                          day < 10
-                            ? (day = "0" + day.toString())
-                            : (day = day.toString());
-                          this.setState({
-                            displayDate: `${r.year}-${month}-${day}`,
-                            startDate: `${r.year}-${month}-${day}`
-                          });
-                          TimePickerAndroid.open({}).then(r2 => {
-                            let hour = parseInt(r2.hour, 10);
-                            hour < 10
-                              ? (hour = "0" + hour.toString())
-                              : (hour = hour.toString());
-                            let minutes = parseInt(r2.minute, 10);
-                            minutes < 10
-                              ? (minutes = "0" + minutes.toString())
-                              : (minutes = minutes.toString());
+                          if (
+                            r.year.length !== null &&
+                            r.month.length !== null &&
+                            r.day.length !== null
+                          ) {
+                            let month = parseInt(r.month, 10) + 1;
+                            month < 10
+                              ? (month = "0" + month.toString())
+                              : (month = month.toString());
+                            let day = parseInt(r.day, 10);
+                            day < 10
+                              ? (day = "0" + day.toString())
+                              : (day = day.toString());
                             this.setState({
-                              displayTime: `${hour}:${minutes}`,
-                              time: `${hour}:${minutes}:00`
+                              displayDate: `${r.year}-${month}-${day}`,
+                              startDate: `${r.year}-${month}-${day}`
                             });
-                          });
+
+                            TimePickerAndroid.open({}).then(r2 => {
+                              if (
+                                r2.hour.length !== null &&
+                                r2.minute.length !== null
+                              ) {
+                                let hour = parseInt(r2.hour, 10);
+                                hour < 10
+                                  ? (hour = "0" + hour.toString())
+                                  : (hour = hour.toString());
+                                let minutes = parseInt(r2.minute, 10);
+                                minutes < 10
+                                  ? (minutes = "0" + minutes.toString())
+                                  : (minutes = minutes.toString());
+                                this.setState({
+                                  displayTime: `${hour}:${minutes}`,
+                                  time: `${hour}:${minutes}:00`
+                                });
+                                Alert.alert(
+                                  "Alarm Date",
+                                  `You selected ${this.state.startDate}   ${
+                                    this.state.time
+                                  } as the starting Date, are you sure this is correct?`,
+                                  [
+                                    {
+                                      text: "Cancel",
+                                      onPress: () => {
+                                        this.setState({
+                                          startDate: "",
+                                          time: ""
+                                        });
+                                      }
+                                    },
+                                    {
+                                      text: "Confirm"
+                                    }
+                                  ]
+                                );
+                              }
+                            });
+                          }
                         });
                       }}
                     />
                     <Button
-                      color={`${backgroundColors.textcolor}`}
+                      color={`${backgroundColors.footer_icon}`}
                       backgroundColor={`${backgroundColors.button}`}
                       buttonStyle={{ marginBottom: 10, width: 125 }}
                       title="Add Alarm"
-                      onPress={() => this.createNewAlarm()}
+                      onPress={() => {
+                        this.state.startDate && this.state.time
+                          ? Alert.alert(
+                              "Alarm",
+                              `Are you sure you want to add an Alarm for ${
+                                this.state.startDate
+                              }  ${this.state.time}?`,
+                              [
+                                { text: "Cancel" },
+                                {
+                                  text: "Confirm",
+                                  onPress: () => this.createNewAlarm()
+                                }
+                              ]
+                            )
+                          : Alert.alert(
+                              "Alarm",
+                              "Please select a Date before Adding an Alarm!"
+                            );
+                      }}
                     />
                   </View>
                 </View>
               )}
               <Button
                 small
-                color={`${backgroundColors.textcolor}`}
+                color={`${backgroundColors.footer_icon}`}
                 backgroundColor={`${backgroundColors.button}`}
-                title={"Delete"}
+                title={"Remove Medicine"}
                 textStyle={{
                   fontSize: 15,
                   letterSpacing: 10
                 }}
                 onPress={() => {
-                  this.props.deleteAlarm(
-                    this.props.activeMedicine.id,
-                    this.props.user.id
+                  Alert.alert(
+                    "Medicine",
+                    "Are you sure you want to remove this Medication?",
+                    [
+                      {
+                        text: "Cancel"
+                      },
+                      {
+                        text: "Yes",
+                        onPress: () => {
+                          this.props.loadingTrue();
+                          this.props.deleteAlarm(
+                            this.props.activeMedicine.id,
+                            this.props.user.id
+                          );
+                          this.props
+                            .deleteMedicine(
+                              this.props.activeMedicine.id,
+                              this.props.user.id
+                            )
+                            .then(() => {
+                              Alert.alert(
+                                "Medicine",
+                                "Medicine successfully removed"
+                              );
+                              this.props.navigation.navigate("Home");
+                            });
+                        }
+                      }
+                    ]
                   );
-                  this.props
-                    .deleteMedicine(
-                      this.props.activeMedicine.id,
-                      this.props.user.id
-                    )
-                    .then(() => this.props.navigation.navigate("Home"));
-                  Alert.alert("Medicine", "Medicine sucessfully removed");
                 }}
               />
             </Card>
-            <PushController navigate={this.props.navigation.navigate} />
           </View>
         )}
       </View>
@@ -261,5 +366,6 @@ export default connect(mapStateToProps, {
   deleteMedicine,
   addAlarm,
   loadingTrue,
-  loadingFalse
+  loadingFalse,
+  retrieveMedicine
 })(Profile);

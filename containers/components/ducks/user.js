@@ -12,12 +12,13 @@ const initialState = {
   didError: false,
   activeMedicine: {},
   backgroundColors: {
-    first: "rgb(33,33,33)",
-    second: "rgb(18,18,18)",
-    third: "rgb(83,83,83)",
-    button: "grey",
-    card: "#535353",
-    textcolor: "white"
+    first: "white",
+    second: "white",
+    third: "white",
+    button: "#338ee1",
+    card: "white",
+    textcolor: "grey",
+    footer_icon: "white"
   }
 };
 
@@ -41,8 +42,16 @@ const GET_USER_BY_ID = "GET_USER_BY_ID";
 const CREATE_USER = "CREATE_USER";
 const LOADING_FALSE = "LOADING_FALSE";
 const LOADING_TRUE = "LOADING_TRUE";
+const DELETE_ALL_ALARMS = "DELETE_ALL_ALARMS";
 
 //Action Creators
+
+export function deleteAlarms(id) {
+  return {
+    type: DELETE_ALL_ALARMS,
+    payload: axios.post(`${API_HOST}/api/alarms/delete`, { id }).then(() => {})
+  };
+}
 
 export function loadingTrue() {
   return {
@@ -127,7 +136,6 @@ export function deleteAlarm(medicineId, id) {
     payload: axios
       .post(`${API_HOST}/api/alarm/delete`, { medicineId, id })
       .then(response => {
-        console.log(response.data);
         return response.data;
       })
       .catch(console.log)
@@ -165,6 +173,7 @@ export function createColors({
   buttonColor,
   cardColor,
   textColor,
+  footer_icon,
   id
 }) {
   return {
@@ -177,6 +186,7 @@ export function createColors({
         buttonColor,
         cardColor,
         textColor,
+        footer_icon,
         id
       })
       .then(response => response.data)
@@ -191,6 +201,7 @@ export function updateColors({
   buttonColor,
   cardColor,
   textColor,
+  footer_icon,
   id
 }) {
   return {
@@ -203,6 +214,7 @@ export function updateColors({
         buttonColor,
         cardColor,
         textColor,
+        footer_icon,
         id
       })
       .then(response => response.data)
@@ -220,12 +232,13 @@ export function getColors(id) {
           return response.data;
         } else {
           return {
-            first: "rgb(33,33,33)",
-            second: "rgb(18,18,18)",
-            third: "rgb(83,83,83)",
-            button: "grey",
-            card: "#535353",
-            textcolor: "white"
+            first: "white",
+            second: "white",
+            third: "white",
+            button: "#338ee1",
+            card: "white",
+            textcolor: "grey",
+            footer_icon: "white"
           };
         }
       })
@@ -332,6 +345,22 @@ export default function user(state = initialState, action = {}) {
       });
 
     case `${RETRIEVE_USER}_REJECTED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        didError: true
+      });
+
+    // DELETE ALL ALARMS
+    case `${DELETE_ALL_ALARMS}_PENDING`:
+      return Object.assign({}, state, { isLoading: true });
+
+    case `${DELETE_ALL_ALARMS}_FULFILLED`:
+      return Object.assign({}, state, {
+        isLoading: false,
+        alarm: action.payload
+      });
+
+    case `${DELETE_ALL_ALARMS}_REJECTED`:
       return Object.assign({}, state, {
         isLoading: false,
         didError: true
@@ -559,12 +588,13 @@ export default function user(state = initialState, action = {}) {
       return Object.assign({}, state, {
         isLoading: false,
         backgroundColors: {
-          first: "rgb(33,33,33)",
-          second: "rgb(18,18,18)",
-          third: "rgb(83,83,83)",
-          button: "grey",
-          card: "#535353",
-          textcolor: "white"
+          first: "white",
+          second: "white",
+          third: "white",
+          button: "#338ee1",
+          card: "white",
+          textcolor: "grey",
+          footer_icon: "white"
         }
       });
 
