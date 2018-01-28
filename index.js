@@ -1,4 +1,4 @@
 import { AppRegistry } from "react-native";
-import App from "./containers/components/index";
+import App from "./src";
 
 AppRegistry.registerComponent("MedicineReminder", () => App);

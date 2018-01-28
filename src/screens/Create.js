@@ -70,6 +70,10 @@ class Create extends Component {
   }
 
   componentDidMount() {
+    this.setState({
+      image:
+        "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png"
+    });
     this.props.loadingFalse();
   }
 
@@ -80,6 +84,8 @@ class Create extends Component {
       this.setState(
         {
           image: source
+            ? source
+            : "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png"
         },
         () => this.props.loadingFalse()
       );
@@ -137,9 +143,7 @@ class Create extends Component {
               <Left>
                 <Thumbnail
                   source={{
-                    uri: !this.state.image
-                      ? "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png"
-                      : this.state.image
+                    uri: this.state.image
                   }}
                 />
                 <Body>

@@ -1,1 +1,0 @@
-SELECT * FROM medicine_users WHERE email = $1;
