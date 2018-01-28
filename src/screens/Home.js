@@ -40,7 +40,7 @@ import { Card } from "react-native-elements";
 import ActionButton from "react-native-action-button";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import styled from "styled-components/native";
-import Menu from "./../extras/Menu";
+import Menu from "../extras/Menu";
 
 import AnimatedLinearGradient, {
   presetColors
@@ -57,7 +57,7 @@ import {
   loadingFalse,
   loadingTrue,
   deleteAlarms
-} from "./../ducks/user";
+} from "../ducks/user";
 
 class Home extends Component {
   constructor(props) {

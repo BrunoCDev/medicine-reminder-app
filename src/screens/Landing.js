@@ -14,15 +14,15 @@ import {
 } from "native-base";
 import { Image, View, StyleSheet, ScrollView } from "react-native";
 
-import HomePage from "./../images/HomePage.png";
-import ColorEditorPage from "./../images/ColorEditorPage.png";
-import InteractionsPage from "./../images/InteractionsPage.png";
-import MedicineEditorPage from "./../images/MedicineEditorPage.png";
+import HomePage from "../images/HomePage.png";
+import ColorEditorPage from "../images/ColorEditorPage.png";
+import InteractionsPage from "../images/InteractionsPage.png";
+import MedicineEditorPage from "../images/MedicineEditorPage.png";
 
 import Carousel from "react-native-snap-carousel";
 import { Loading } from "./Loading";
 
-import { loadingFalse } from "./../ducks/user";
+import { loadingFalse } from "../ducks/user";
 import { connect } from "react-redux";
 
 class Landing extends Component {

@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { View, Alert, AsyncStorage } from "react-native";
 import { Card, Button, FormLabel, FormInput } from "react-native-elements";
-import { onCreateAccount } from "./../auth";
+import { onCreateAccount } from "../auth";
 import { connect } from "react-redux";
-import { retrieveUser, createUser, loadingTrue } from "./../ducks/user";
+import { retrieveUser, createUser, loadingTrue } from "../ducks/user";
 import PushNotificationsHandler from "react-native-push-notification";
 
 class SignUp extends Component {

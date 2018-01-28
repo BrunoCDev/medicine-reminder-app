@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { View, Alert, AsyncStorage } from "react-native";
 import { Card, Button, FormLabel, FormInput } from "react-native-elements";
-import { onSignIn } from "./../auth";
-import { retrieveUser, loadingTrue } from "./../ducks/user";
+import { onSignIn } from "../auth";
+import { retrieveUser, loadingTrue } from "../ducks/user";
 
 import { connect } from "react-redux";
 

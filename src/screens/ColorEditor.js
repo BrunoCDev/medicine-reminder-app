@@ -8,7 +8,7 @@ import {
   Button,
   TouchableWithoutFeedback
 } from "react-native";
-import { backgroundColors } from "./../ducks/user";
+import { backgroundColors } from "../ducks/user";
 import axios from "axios";
 
 import { ColorPicker } from "react-native-color-picker";

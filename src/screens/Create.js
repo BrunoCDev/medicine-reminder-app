@@ -45,7 +45,7 @@ import {
   createMedicineActive,
   loadingTrue,
   loadingFalse
-} from "./../ducks/user";
+} from "../ducks/user";
 
 import { connect } from "react-redux";
 import Menu from "./../extras/Menu";

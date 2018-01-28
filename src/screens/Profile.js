@@ -23,7 +23,7 @@ import {
   loadingTrue,
   loadingFalse,
   retrieveMedicine
-} from "./../ducks/user";
+} from "../ducks/user";
 
 import { Loading } from "./Loading";
 
