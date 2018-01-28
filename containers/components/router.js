@@ -7,6 +7,7 @@ import Home from "./screens/Home";
 import Profile from "./screens/Profile";
 import Create from "./screens/Create";
 import ColorEditor from "./screens/ColorEditor";
+import Landing from "./screens/Landing";
 
 import Interaction from "./screens/Interaction";
 
@@ -18,14 +19,14 @@ export const createRootNavigator = (signedIn = false) => {
         navigationOptions: {
           gesturesEnabled: false
         },
-        initialRouteName: signedIn ? "Home" : "SignUp"
+        initialRouteName: signedIn ? "Home" : "Landing"
       },
       SignedOut: {
         screen: SignedOut,
         navigationOptions: {
           gesturesEnabled: false
         },
-        initialRouteName: !signedIn ? "SignUp" : "Home"
+        initialRouteName: !signedIn ? "Landing" : "Home"
       }
     },
     {
@@ -37,6 +38,12 @@ export const createRootNavigator = (signedIn = false) => {
 };
 
 export const SignedOut = StackNavigator({
+  Landing: {
+    screen: Landing,
+    navigationOptions: {
+      title: "Welcome To Medicine Reminder"
+    }
+  },
   SignUp: {
     screen: SignUp,
     navigationOptions: {

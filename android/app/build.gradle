@@ -168,7 +168,6 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-smart-splashscreen')
     compile project(':react-native-push-notification')
     compile project(':react-native-linear-gradient')
     compile ('com.google.android.gms:play-services-gcm:11.6.0') {

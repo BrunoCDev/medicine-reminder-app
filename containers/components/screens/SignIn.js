@@ -39,11 +39,11 @@ class Login extends Component {
             onPress={() =>
               retrieveUser(email, password).then(res => {
                 if (this.props.user.id) {
+                  this.props.loadingTrue();
                   AsyncStorage.setItem(
                     "user",
                     this.props.user.id.toString()
                   ).then(() => {
-                    this.props.loadingTrue();
                     navigation.navigate("Home");
                   });
                 } else {

@@ -24,7 +24,6 @@ import com.imagepicker.ImagePickerPackage;
 import com.calendarevents.CalendarEventsPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
-import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;    //SPLASH SCREEN
 import com.BV.LinearGradient.LinearGradientPackage;
 import java.util.Arrays;
 import java.util.List;
@@ -57,8 +56,7 @@ public class MainApplication extends Application implements ReactApplication {
         new CalendarEventsPackage(),
         new VectorIconsPackage(),
         new ReactNativePushNotificationPackage(),
-        new LinearGradientPackage(),
-        new RCTSplashScreenPackage()
+        new LinearGradientPackage()
         
       );
     }

@@ -76,47 +76,51 @@ class Interaction extends Component {
   render() {
     this.props.loading ? <Loading /> : null;
     return (
-      <ScrollView style={{ paddingVertical: 20 }}>
-        <Card title="Interactions">
-          <Button
-            buttonStyle={{ marginTop: 0 }}
-            backgroundColor={`${this.props.backgroundColors.button}`}
-            color={`${this.props.backgroundColors.footer_icon}`}
-            title="Check"
-            onPress={() => {
-              this.props.loadingTrue();
-              this.checkForInteractions();
-            }}
-          />
-
-          {this.state.description.length ? (
-            this.state.description.map((el, i) => (
-              <Text
-                key={i}
-                style={{ color: "grey", textAlign: "center", marginTop: 10 }}
-              >
-                {el}
-              </Text>
-            ))
-          ) : (
-            <Text style={{ color: "grey", textAlign: "center", marginTop: 10 }}>
-              No Bad Interactions Found
-            </Text>
-          )}
-          {this.state.description.length ? (
+      <View style={{ flex: 1, backgroundColor: "white" }}>
+        <ScrollView style={{ paddingVertical: 20 }}>
+          <Card title="Interactions">
             <Button
-              buttonStyle={{ marginTop: 20 }}
+              buttonStyle={{ marginTop: 0 }}
               backgroundColor={`${this.props.backgroundColors.button}`}
               color={`${this.props.backgroundColors.footer_icon}`}
-              title="Delete"
+              title="Check"
               onPress={() => {
-                this.deleteInteractions();
-                this.setState({ loaded: false });
+                this.props.loadingTrue();
+                this.checkForInteractions();
               }}
             />
-          ) : null}
-        </Card>
-      </ScrollView>
+
+            {this.state.description.length ? (
+              this.state.description.map((el, i) => (
+                <Text
+                  key={i}
+                  style={{ color: "grey", textAlign: "center", marginTop: 10 }}
+                >
+                  {el}
+                </Text>
+              ))
+            ) : (
+              <Text
+                style={{ color: "grey", textAlign: "center", marginTop: 10 }}
+              >
+                No Bad Interactions Found
+              </Text>
+            )}
+            {this.state.description.length ? (
+              <Button
+                buttonStyle={{ marginTop: 20 }}
+                backgroundColor={`${this.props.backgroundColors.button}`}
+                color={`${this.props.backgroundColors.footer_icon}`}
+                title="Delete"
+                onPress={() => {
+                  this.deleteInteractions();
+                  this.setState({ loaded: false });
+                }}
+              />
+            ) : null}
+          </Card>
+        </ScrollView>
+      </View>
     );
   }
 }

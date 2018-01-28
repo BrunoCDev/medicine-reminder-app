@@ -134,7 +134,7 @@ class Profile extends Component {
                       color: `${backgroundColors.textcolor}`
                     }}
                   >
-                    Start Date: {this.state.startDate} Hour:{" "}
+                    Start Date: {this.props.alarm.display_date} Hour:{" "}
                     {this.props.alarm.display_time}
                   </Text>
                   <Text

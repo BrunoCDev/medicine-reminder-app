@@ -217,7 +217,7 @@ class Home extends Component {
                   navigation.navigate("Interaction");
                 }}
                 onLongPress={() => {
-                  Alert.alert("Logout", "Logout Sucessful");
+                  Alert.alert("Logout", "Logout Successful");
                   this.props.loadingTrue();
                   AsyncStorage.setItem("user", "").then(() => {
                     this.props.navigation.navigate("SignUp");

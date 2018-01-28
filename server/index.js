@@ -1,23 +1,22 @@
 require("dotenv").config();
 // REQUIRE DEPENDENCIES
 const { json } = require("body-parser");
-const cors = require("cors");
+// const cors = require("cors");
 const express = require("express");
 const massive = require("massive");
 const session = require("express-session");
 
 const uc = require("./controllers/userController");
 
-const { CONNECTION_STRING, SESSION_SECRET, API_HOST } = process.env;
-
-const PORT = process.env.PORT || 3005;
+const { CONNECTION_STRING, SESSION_SECRET } = process.env;
 
 // MAKE PORT AND APP
 const app = express();
+const PORT = process.env.PORT || 3005;
 
 // USING BODY PARSER AND CORS
 app.use(json());
-app.use(cors());
+// app.use(cors());
 
 // SETTING UP DATABASE CONNECTION
 massive(CONNECTION_STRING)

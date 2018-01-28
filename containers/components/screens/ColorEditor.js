@@ -234,28 +234,34 @@ class ColorEditor extends Component {
                   }}
                 />
               ) : (
-                <Button
-                  title="Save"
-                  color={this.props.backgroundColors.button}
-                  onPress={() => {
-                    this.props.loadingTrue();
-                    Alert.alert("Color Editor", "Theme was sucessfully saved!");
-                    const { id } = this.props.user;
-                    this.props
-                      .createColors({
-                        firstColor: this.state.firstColor,
-                        secondColor: this.state.secondColor,
-                        thirdColor: this.state.thirdColor,
-                        buttonColor: this.state.buttonColor,
-                        cardColor: this.state.cardColor,
-                        textColor: this.state.textColor,
-                        footer_icon: this.state.footer_icon,
-                        id: id
-                      })
-                      .then(() => this.props.getColors(id));
-                    this.props.navigation.navigate("Home");
-                  }}
-                />
+                <View>
+                  <Text style={{ marginTop: 60 }} />
+                  <Button
+                    title="Save"
+                    color={this.props.backgroundColors.button}
+                    onPress={() => {
+                      this.props.loadingTrue();
+                      Alert.alert(
+                        "Color Editor",
+                        "Theme was sucessfully saved!"
+                      );
+                      const { id } = this.props.user;
+                      this.props
+                        .createColors({
+                          firstColor: this.state.firstColor,
+                          secondColor: this.state.secondColor,
+                          thirdColor: this.state.thirdColor,
+                          buttonColor: this.state.buttonColor,
+                          cardColor: this.state.cardColor,
+                          textColor: this.state.textColor,
+                          footer_icon: this.state.footer_icon,
+                          id: id
+                        })
+                        .then(() => this.props.getColors(id));
+                      this.props.navigation.navigate("Home");
+                    }}
+                  />
+                </View>
               )}
             </View>
           </View>
