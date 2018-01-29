@@ -84,7 +84,6 @@ class Home extends Component {
                     this.props
                       .editMedicine(notification.notificationId)
                       .then(() => {
-                        this.props.loadingFalse();
                         this.setState({ loading: false });
                         this.props.navigation.navigate("Profile");
                       });
@@ -93,7 +92,6 @@ class Home extends Component {
                 requestPermissions: true
               });
               this.props.getColors(id).then(() => {
-                this.props.loadingFalse();
                 this.setState({ loading: false });
                 if (!this.props.medicine.length) {
                   setTimeout(
@@ -110,7 +108,6 @@ class Home extends Component {
           }
         });
       } else {
-        this.props.loadingFalse();
         this.setState({ loading: false });
         Alert.alert("Error", "Something went wrong!");
         this.props.navigation.navigate("SignUp");
@@ -144,7 +141,7 @@ class Home extends Component {
       }
     });
 
-    return this.state.loading && this.props.loading ? (
+    return this.state.loading ? (
       <Loading />
     ) : (
       <View style={{ flex: 1 }}>
@@ -166,10 +163,11 @@ class Home extends Component {
                   <ListItem
                     style={{ height: 100 }}
                     onPress={() => {
-                      this.props.loadingTrue();
-                      this.props
-                        .editMedicine(item.id)
-                        .then(() => navigation.navigate("Profile"));
+                      this.setState({ loading: true });
+                      this.props.editMedicine(item.id).then(() => {
+                        navigation.navigate("Profile");
+                        this.setState({ loading: false });
+                      });
                     }}
                   >
                     <Thumbnail square size={120} source={{ uri: item.image }} />
@@ -188,26 +186,28 @@ class Home extends Component {
             <FooterTab style={styles.footer}>
               <Button
                 onPress={() => {
-                  this.props.loadingTrue();
+                  this.setState({ loading: true });
                   navigation.navigate("Colors");
+                  this.setState({ loading: false });
                 }}
                 onLongPress={() => {
                   Alert.alert("Colors", "Colors sucessfully removed");
                   this.setState({ loading: true });
                   this.props.deleteColors(this.props.user.id).then(() => {
-                    this.props
-                      .getColors(this.props.user.id)
-                      .then(() => this.setState({ loading: false }));
+                    this.props.getColors(this.props.user.id).then(() => {
+                      this.setState({ loading: false });
+                    });
                   });
                 }}
-                delayLongPress={3000}
+                delayLongPress={1500}
               >
                 <Icon name="format-color-fill" style={styles.footerButton} />
               </Button>
               <Button
                 onPress={() => {
-                  this.props.loadingTrue();
+                  this.setState({ loading: true });
                   this.props.navigation.navigate("Create");
+                  this.setState({ loading: false });
                 }}
                 onLongPress={() => {
                   Alert.alert("Alarm", "All alarms deleted");
@@ -217,24 +217,25 @@ class Home extends Component {
                     .deleteAlarms(this.props.user.id)
                     .then(() => this.setState({ loading: false }));
                 }}
-                delayLongPress={3000}
+                delayLongPress={1500}
               >
                 <Icon name="plus-box" style={styles.footerButton} />
               </Button>
               <Button
                 onPress={() => {
-                  this.props.loadingTrue();
+                  this.setState({ loading: true });
                   navigation.navigate("Interaction");
+                  this.setState({ loading: false });
                 }}
                 onLongPress={() => {
                   Alert.alert("Logout", "Logout Successful");
-                  this.props.loadingTrue();
+                  this.setState({ loading: true });
                   AsyncStorage.setItem("user", "").then(() => {
-                    this.props.loadingFalse();
                     this.props.navigation.navigate("SignUp");
+                    this.setState({ loading: false });
                   });
                 }}
-                delayLongPress={3000}
+                delayLongPress={1500}
               >
                 <Icon name="link-variant" style={styles.footerButton} />
               </Button>

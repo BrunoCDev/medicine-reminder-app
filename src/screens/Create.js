@@ -62,7 +62,7 @@ class Create extends Component {
       interval: "day",
       startDate: "",
       time: "",
-      loading: false
+      loading: true
     };
 
     this.createNewMedicine = this.createNewMedicine.bind(this);
@@ -76,14 +76,14 @@ class Create extends Component {
 
   getImage = () => {
     ImagePicker.showImagePicker({ cameraType: "back" }, response => {
-      this.props.loadingTrue();
+      this.setState({ loading: true });
       let source = response.uri;
       this.setState({
         image: source
           ? source
           : "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png"
       });
-      this.props.loadingFalse();
+      this.setState({ loading: false });
     });
   };
 
@@ -111,21 +111,19 @@ class Create extends Component {
                   id
                 )
                 .then(response => {
-                  this.setState({ loading: false });
                   Alert.alert("Medicine", "Medicine was sucessfully added");
                   this.props.navigation.navigate("Home");
+                  this.setState({ loading: false });
                 });
             } else {
-              this.setState({ loading: false });
-              this.props.loadingFalse();
               Alert.alert("Error", "Something Went Wrong");
+              this.setState({ loading: false });
             }
           })
           .catch(console.log);
       } else {
-        this.setState({ loading: false });
-        this.props.loadingFalse();
         Alert.alert("Medicine not found", "Make sure the name is right!");
+        this.setState({ loading: false });
       }
     });
   }
@@ -181,7 +179,6 @@ class Create extends Component {
             <Button
               onPress={() => {
                 this.setState({ loading: true });
-                this.props.loadingTrue();
                 this.createNewMedicine();
               }}
               style={{ backgroundColor: this.props.backgroundColors.button }}

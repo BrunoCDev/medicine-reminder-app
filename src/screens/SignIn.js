@@ -4,6 +4,8 @@ import { Card, Button, FormLabel, FormInput } from "react-native-elements";
 import { onSignIn } from "../auth";
 import { retrieveUser, loadingTrue } from "../ducks/user";
 
+import { Loading } from "./Loading";
+
 import { connect } from "react-redux";
 
 class Login extends Component {
@@ -11,13 +13,17 @@ class Login extends Component {
     super(props);
     this.state = {
       email: "",
-      password: ""
+      password: "",
+      loading: false,
+      user: false
     };
   }
   render() {
     const { navigation, retrieveUser } = this.props;
     const { email, password } = this.state;
-    return (
+    return this.state.loading ? (
+      <Loading />
+    ) : (
       <View style={{ paddingVertical: 20 }}>
         <Card title="SIGN IN">
           <FormLabel>Email</FormLabel>
@@ -36,24 +42,30 @@ class Login extends Component {
             buttonStyle={{ marginTop: 20 }}
             backgroundColor="#03A9F4"
             title="SIGN IN"
-            onPress={() =>
-              retrieveUser(email, password).then(res => {
+            onPress={() => {
+              this.setState({ loading: true });
+              retrieveUser(email, password).then(() => {
+                console.log("props:", this.props.user);
                 if (this.props.user.id) {
-                  this.props.loadingTrue();
+                  console.log("true");
+                  this.setState({ user: true });
                   AsyncStorage.setItem(
                     "user",
                     this.props.user.id.toString()
                   ).then(() => {
+                    this.setState({ loading: false });
                     navigation.navigate("Home");
                   });
-                } else {
+                } else if (!this.props.user.id) {
+                  this.setState({ loading: false });
                   Alert.alert(
                     "Login Not Successful",
                     "Please provide a valid Email and Password"
                   );
                 }
-              })
-            }
+              });
+              this.setState({ loading: false });
+            }}
           />
         </Card>
       </View>

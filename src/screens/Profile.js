@@ -37,17 +37,17 @@ class Profile extends Component {
       interval: null,
       alarm: false,
       startDate: "",
-      time: ""
+      time: "",
+      loading: true
     };
   }
 
   componentDidMount() {
-    this.props.loadingTrue();
-    this.setState({ alarm: false });
+    this.setState({ alarm: false, loading: true });
     this.props
       .getAlarm(this.props.activeMedicine.id, this.props.user.id)
       .then(() => {
-        this.props.loadingFalse();
+        this.setState({ loading: false });
       });
   }
 
@@ -59,7 +59,9 @@ class Profile extends Component {
     let final = new Date(`${this.state.startDate}T${this.state.time}-06:00`);
     PushNotification.configure({
       onNotification: notification => {
+        this.setState({ loading: true });
         this.props.retrieveMedicine(this.props.activeMedicine.id).then(() => {
+          this.setState({ loading: false });
           this.props.navigation.navigate("Profile");
         });
       },
@@ -73,22 +75,26 @@ class Profile extends Component {
       vibration: 1000,
       date: final
     });
-    this.props.addAlarm(
-      medicineId,
-      id,
-      interval,
-      `${this.state.startDate} ${this.state.time}`,
-      this.state.displayDate,
-      this.state.displayTime
-    );
-    Alert.alert("Alarm", "Alarm was successfully added");
+    this.props
+      .addAlarm(
+        medicineId,
+        id,
+        interval,
+        `${this.state.startDate} ${this.state.time}`,
+        this.state.displayDate,
+        this.state.displayTime
+      )
+      .then(() => {
+        this.setState({ loading: false });
+        Alert.alert("Alarm", "Alarm was successfully added");
+      });
   }
 
   render() {
     const { navigation, activeMedicine, backgroundColors } = this.props;
     return (
       <View style={{ flex: 1 }}>
-        {this.props.loading ? (
+        {this.state.loading ? (
           <Loading />
         ) : (
           <View
@@ -166,18 +172,26 @@ class Profile extends Component {
                           {
                             text: "Yes",
                             onPress: () => {
+                              this.setState({ loading: true });
                               PushNotification.cancelLocalNotifications({
                                 id: this.props.activeMedicine.id.toString()
                               });
-                              this.props.deleteAlarm(
-                                this.props.activeMedicine.id,
-                                this.props.user.id
-                              );
-                              this.setState({ startDate: false, time: false });
-                              Alert.alert(
-                                "Alarm",
-                                "Alarm was successfully removed"
-                              );
+                              this.props
+                                .deleteAlarm(
+                                  this.props.activeMedicine.id,
+                                  this.props.user.id
+                                )
+                                .then(() => {
+                                  this.setState({
+                                    startDate: false,
+                                    time: false,
+                                    loading: false
+                                  });
+                                  Alert.alert(
+                                    "Alarm",
+                                    "Alarm was successfully removed"
+                                  );
+                                });
                             }
                           }
                         ]
@@ -294,7 +308,10 @@ class Profile extends Component {
                                 { text: "Cancel" },
                                 {
                                   text: "Confirm",
-                                  onPress: () => this.createNewAlarm()
+                                  onPress: () => {
+                                    this.setState({ loading: true });
+                                    this.createNewAlarm();
+                                  }
                                 }
                               ]
                             )
@@ -327,11 +344,8 @@ class Profile extends Component {
                       {
                         text: "Yes",
                         onPress: () => {
-                          Alert.alert(
-                            "Medicine",
-                            "Medicine successfully removed"
-                          );
-                          this.props.loadingTrue();
+                          this.setState({ loading: true });
+
                           this.props.deleteAlarm(
                             this.props.activeMedicine.id,
                             this.props.user.id
@@ -342,7 +356,11 @@ class Profile extends Component {
                               this.props.user.id
                             )
                             .then(() => {
-                              this.props.loadingFalse();
+                              this.setState({ loading: false });
+                              Alert.alert(
+                                "Medicine",
+                                "Medicine successfully removed"
+                              );
                               this.props.navigation.navigate("Home");
                             });
                         }

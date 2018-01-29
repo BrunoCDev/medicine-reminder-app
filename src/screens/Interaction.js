@@ -18,7 +18,7 @@ class Interaction extends Component {
       str: "",
       final: "",
       description: [],
-      loaded: false
+      loaded: true
     };
 
     this.checkForInteractions = this.checkForInteractions.bind(this);
@@ -26,11 +26,11 @@ class Interaction extends Component {
   }
 
   componentDidMount() {
-    this.props.loadingFalse();
+    this.setState({ loading: false });
   }
 
   deleteInteractions() {
-    this.setState({ description: [] });
+    this.setState({ description: [], loading: false });
   }
 
   checkForInteractions() {
@@ -46,21 +46,20 @@ class Interaction extends Component {
             .get(`${this.state.int}${this.state.str}`)
             .then(res2 => {
               if (res2.data.fullInteractionTypeGroup) {
-                Alert.alert(
-                  "Bad Reactions Found",
-                  `These medications might have some side effects when taken together!`
-                );
                 res2.data.fullInteractionTypeGroup[0].fullInteractionType.map(
                   (el, index) => {
                     this.state.description.push(
                       el.interactionPair[0].description
                     );
-                    this.props.loadingFalse();
-                    this.setState({ loaded: true });
                   }
                 );
+                this.setState({ loading: false });
+                Alert.alert(
+                  "Bad Reactions Found",
+                  `These medications might have some side effects when taken together!`
+                );
               } else {
-                this.props.loadingFalse();
+                this.setState({ loading: false });
                 Alert.alert(
                   "No Bad Reactions Found",
                   `We didn't find any bad reactions between these medicines`
@@ -74,8 +73,9 @@ class Interaction extends Component {
   }
 
   render() {
-    this.props.loading ? <Loading /> : null;
-    return (
+    return this.state.loading ? (
+      <Loading />
+    ) : (
       <View style={{ flex: 1, backgroundColor: "white" }}>
         <ScrollView style={{ paddingVertical: 20 }}>
           <Card title="Interactions">
@@ -85,7 +85,7 @@ class Interaction extends Component {
               color={`${this.props.backgroundColors.footer_icon}`}
               title="Check"
               onPress={() => {
-                this.props.loadingTrue();
+                this.setState({ loading: true });
                 this.checkForInteractions();
               }}
             />
@@ -113,8 +113,8 @@ class Interaction extends Component {
                 color={`${this.props.backgroundColors.footer_icon}`}
                 title="Delete"
                 onPress={() => {
+                  this.setState({ loaded: true });
                   this.deleteInteractions();
-                  this.setState({ loaded: false });
                 }}
               />
             ) : null}

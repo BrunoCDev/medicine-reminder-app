@@ -35,12 +35,14 @@ class ColorEditor extends Component {
       buttonColor: `${this.props.backgroundColors.button}`,
       cardColor: `${this.props.backgroundColors.card}`,
       textColor: `${this.props.backgroundColors.textcolor}`,
-      footer_icon: `${this.props.backgroundColors.footer_icon}`
+      footer_icon: `${this.props.backgroundColors.footer_icon}`,
+      loading: true
     };
   }
 
   componentDidMount() {
     this.props.loadingFalse();
+    this.setState({ loading: false });
   }
 
   render() {
@@ -61,8 +63,9 @@ class ColorEditor extends Component {
       textcolor,
       footer_icon
     } = this.props.backgroundColors;
-    this.props.loading ? <Loading /> : null;
-    return (
+    return this.state.loading ? (
+      <Loading />
+    ) : (
       <View style={{ flex: 1, backgroundColor: "#FAFAFA" }}>
         {this.state.colorPicker === true ? (
           <ColorPicker
@@ -218,7 +221,7 @@ class ColorEditor extends Component {
                   title="Update"
                   color={this.props.backgroundColors.button}
                   onPress={() => {
-                    this.props.loadingTrue();
+                    this.setState({ loading: true });
                     const { id } = this.props.user;
                     this.props.updateColors({
                       firstColor: this.state.firstColor,
@@ -231,6 +234,7 @@ class ColorEditor extends Component {
                       id: id
                     });
                     this.props.navigation.navigate("Home");
+                    this.setState({ loading: false });
                   }}
                 />
               ) : (
@@ -240,7 +244,7 @@ class ColorEditor extends Component {
                     title="Save"
                     color={this.props.backgroundColors.button}
                     onPress={() => {
-                      this.props.loadingTrue();
+                      this.setState({ loading: true });
                       Alert.alert(
                         "Color Editor",
                         "Theme was sucessfully saved!"
@@ -259,6 +263,7 @@ class ColorEditor extends Component {
                         })
                         .then(() => this.props.getColors(id));
                       this.props.navigation.navigate("Home");
+                      this.setState({ loading: false });
                     }}
                   />
                 </View>
