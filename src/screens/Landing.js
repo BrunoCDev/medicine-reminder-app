@@ -34,9 +34,6 @@ class Landing extends Component {
   }
 
   componentDidMount() {
-    this.setState({
-      images: [HomePage, ColorEditorPage, InteractionsPage, MedicineEditorPage]
-    });
     this.props.loadingFalse();
   }
 
@@ -60,6 +57,12 @@ class Landing extends Component {
         width: 370
       }
     });
+    const dataImages = [
+      HomePage,
+      ColorEditorPage,
+      InteractionsPage,
+      MedicineEditorPage
+    ];
     this.props.loading ? <Loading /> : null;
     return (
       <View style={{ flex: 1 }}>
@@ -68,12 +71,11 @@ class Landing extends Component {
             ref={c => {
               this._carousel = c;
             }}
-            data={this.state.images}
+            data={dataImages}
             renderItem={this._renderItem}
+            firstItem={0}
             sliderWidth={370}
             itemWidth={370}
-            autoplay={true}
-            loop={true}
           />
         )}
 

@@ -65,11 +65,13 @@ class Home extends Component {
 
     this.bounceValue = new Animated.Value(0);
 
-    this.state = {};
+    this.state = {
+      loading: true
+    };
   }
 
   componentDidMount() {
-    this.props.loadingTrue();
+    this.setState({ loading: true });
     AsyncStorage.getItem("user").then(result => {
       if (result) {
         this.props.getUserById(result).then(res => {
@@ -82,8 +84,9 @@ class Home extends Component {
                     this.props
                       .editMedicine(notification.notificationId)
                       .then(() => {
-                        this.props.navigation.navigate("Profile");
                         this.props.loadingFalse();
+                        this.setState({ loading: false });
+                        this.props.navigation.navigate("Profile");
                       });
                   }
                 },
@@ -91,6 +94,7 @@ class Home extends Component {
               });
               this.props.getColors(id).then(() => {
                 this.props.loadingFalse();
+                this.setState({ loading: false });
                 if (!this.props.medicine.length) {
                   setTimeout(
                     () =>
@@ -106,6 +110,8 @@ class Home extends Component {
           }
         });
       } else {
+        this.props.loadingFalse();
+        this.setState({ loading: false });
         Alert.alert("Error", "Something went wrong!");
         this.props.navigation.navigate("SignUp");
       }
@@ -138,8 +144,9 @@ class Home extends Component {
       }
     });
 
-    this.props.loading ? <Loading /> : null;
-    return (
+    return this.state.loading && this.props.loading ? (
+      <Loading />
+    ) : (
       <View style={{ flex: 1 }}>
         <Container>
           <AnimatedLinearGradient
@@ -185,12 +192,12 @@ class Home extends Component {
                   navigation.navigate("Colors");
                 }}
                 onLongPress={() => {
-                  this.props.loadingTrue();
                   Alert.alert("Colors", "Colors sucessfully removed");
+                  this.setState({ loading: true });
                   this.props.deleteColors(this.props.user.id).then(() => {
                     this.props
                       .getColors(this.props.user.id)
-                      .then(() => this.props.navigation.navigate("Home"));
+                      .then(() => this.setState({ loading: false }));
                   });
                 }}
                 delayLongPress={3000}
@@ -203,9 +210,12 @@ class Home extends Component {
                   this.props.navigation.navigate("Create");
                 }}
                 onLongPress={() => {
-                  PushNotification.cancelAllLocalNotifications();
-                  this.props.deleteAlarms(this.props.user.id);
                   Alert.alert("Alarm", "All alarms deleted");
+                  this.setState({ loading: true });
+                  PushNotification.cancelAllLocalNotifications();
+                  this.props
+                    .deleteAlarms(this.props.user.id)
+                    .then(() => this.setState({ loading: false }));
                 }}
                 delayLongPress={3000}
               >
@@ -220,8 +230,8 @@ class Home extends Component {
                   Alert.alert("Logout", "Logout Successful");
                   this.props.loadingTrue();
                   AsyncStorage.setItem("user", "").then(() => {
-                    this.props.navigation.navigate("SignUp");
                     this.props.loadingFalse();
+                    this.props.navigation.navigate("SignUp");
                   });
                 }}
                 delayLongPress={3000}

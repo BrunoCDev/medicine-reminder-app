@@ -327,6 +327,10 @@ class Profile extends Component {
                       {
                         text: "Yes",
                         onPress: () => {
+                          Alert.alert(
+                            "Medicine",
+                            "Medicine successfully removed"
+                          );
                           this.props.loadingTrue();
                           this.props.deleteAlarm(
                             this.props.activeMedicine.id,
@@ -338,10 +342,7 @@ class Profile extends Component {
                               this.props.user.id
                             )
                             .then(() => {
-                              Alert.alert(
-                                "Medicine",
-                                "Medicine successfully removed"
-                              );
+                              this.props.loadingFalse();
                               this.props.navigation.navigate("Home");
                             });
                         }

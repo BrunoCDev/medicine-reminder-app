@@ -30,11 +30,10 @@ import {
   FooterTab
 } from "native-base";
 
-import { Loading } from "./Loading";
-
 import PushNotification from "react-native-push-notification";
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { Loading } from "./Loading";
 
 import styled from "styled-components/native";
 
@@ -62,7 +61,8 @@ class Create extends Component {
       rxcuis: "",
       interval: "day",
       startDate: "",
-      time: ""
+      time: "",
+      loading: false
     };
 
     this.createNewMedicine = this.createNewMedicine.bind(this);
@@ -70,10 +70,7 @@ class Create extends Component {
   }
 
   componentDidMount() {
-    this.setState({
-      image:
-        "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png"
-    });
+    this.setState({ loading: false });
     this.props.loadingFalse();
   }
 
@@ -81,14 +78,12 @@ class Create extends Component {
     ImagePicker.showImagePicker({ cameraType: "back" }, response => {
       this.props.loadingTrue();
       let source = response.uri;
-      this.setState(
-        {
-          image: source
-            ? source
-            : "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png"
-        },
-        () => this.props.loadingFalse()
-      );
+      this.setState({
+        image: source
+          ? source
+          : "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png"
+      });
+      this.props.loadingFalse();
     });
   };
 
@@ -116,16 +111,19 @@ class Create extends Component {
                   id
                 )
                 .then(response => {
+                  this.setState({ loading: false });
                   Alert.alert("Medicine", "Medicine was sucessfully added");
                   this.props.navigation.navigate("Home");
                 });
             } else {
+              this.setState({ loading: false });
               this.props.loadingFalse();
               Alert.alert("Error", "Something Went Wrong");
             }
           })
           .catch(console.log);
       } else {
+        this.setState({ loading: false });
         this.props.loadingFalse();
         Alert.alert("Medicine not found", "Make sure the name is right!");
       }
@@ -134,8 +132,9 @@ class Create extends Component {
 
   render() {
     const { navigation, backgroundColors } = this.props;
-    this.props.loading ? <Loading /> : null;
-    return (
+    return this.state.loading ? (
+      <Loading />
+    ) : (
       <Container>
         <Content>
           <Card>
@@ -169,9 +168,7 @@ class Create extends Component {
               >
                 <Image
                   source={{
-                    uri: !this.state.image
-                      ? "http://drpattydental.com/wp-content/uploads/2017/05/placeholder.png"
-                      : this.state.image
+                    uri: this.state.image
                   }}
                   style={{ height: 350, flex: 1 }}
                 />
@@ -183,6 +180,7 @@ class Create extends Component {
           <FooterTab>
             <Button
               onPress={() => {
+                this.setState({ loading: true });
                 this.props.loadingTrue();
                 this.createNewMedicine();
               }}
