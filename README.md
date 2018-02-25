@@ -6,8 +6,8 @@ App was built in React Native, it provides a way to keep track of medication tha
 
 Front-End and Server are separated on GitHub:
 
-[Server](https://github.com/BrunoCDev/medicine-reminder-api)
-[Front-end](https://github.com/BrunoCDev/medicine-reminder-app)
+* [Server](https://github.com/BrunoCDev/medicine-reminder-api)
+* [Front-end](https://github.com/BrunoCDev/medicine-reminder-app)
 
 ## Download
 
@@ -50,6 +50,6 @@ yarn deploy
 * PostgreSQL
 * Node (express)
 
-## Authors
+## Author
 
 * **Bruno Carvalho** - Full Stack - [Portfolio](https://brunoc.me/) - [GitHub](https://github.com/Brunocdev)
