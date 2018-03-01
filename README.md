@@ -11,6 +11,14 @@ Front-End and Server are separated on GitHub:
 
 ## Download
 
+QR Code Scan:
+
+![alt text](http://www.droidbin.com/p1c7h3tc876o512gc1uvcfe0aie3.png)
+
+Download:
+
+* [Link](http://www.droidbin.com/p1c7h3tc876o512gc1uvcfe0aie3)
+
 Currently under maintenance.
 
 ## Description
