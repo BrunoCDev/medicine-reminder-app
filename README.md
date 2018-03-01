@@ -19,8 +19,6 @@ Download:
 
 * [Link](http://www.droidbin.com/p1c7h3tc876o512gc1uvcfe0aie3)
 
-Currently under maintenance.
-
 ## Description
 
 Here are some of the features:
